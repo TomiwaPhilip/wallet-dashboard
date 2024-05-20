@@ -18,7 +18,7 @@ export const defaultSession: SessionData = {
 
 export const sessionOptions: SessionOptions = {
   password: process.env.SESSION_SECRET!,
-  cookieName: "veridaq-session",
+  cookieName: "mileston-session",
   cookieOptions: {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
