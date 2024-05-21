@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.input-placeholder {
+  @apply text-[#464D67] /* Apply any Tailwind utility classes */;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -13,4 +17,8 @@ body {
   height: 100%;
   margin: 0;
   overflow-x: hidden;
+}
+
+.cards-bg {
+  background-color: rgb(14, 16, 24);
 }
