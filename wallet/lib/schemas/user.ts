@@ -14,8 +14,9 @@ const UserSchema = new Schema({
     type: String,
     // required: [true, 'Lastname is required!'],
   },
-  middlename: {
+  phoneNumber: {
     type: String,
+    unique: true,
   },
   image: {
     type: String,

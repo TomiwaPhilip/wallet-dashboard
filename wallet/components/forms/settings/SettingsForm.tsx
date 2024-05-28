@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { OutlineButtonSm } from "@/components/shared/buttons";
+import { SaveSettings } from "@/lib/actions/settings.action";
+import { StatusMessage } from "@/components/shared/shared";
 
 interface FormData {
   firstName: string;
@@ -24,6 +26,8 @@ const SettingsForm: React.FC<Props> = ({ defaultValues }) => {
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [disable, setDisable] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     if (defaultValues) {
@@ -66,24 +70,38 @@ const SettingsForm: React.FC<Props> = ({ defaultValues }) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setDisable(true);
+    setIsSubmitted(false);
+    setIsError(false);
 
     const validationErrors = validate(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
       console.log("Form Data Submitted:", formData);
-      setErrors({});
+
+      try {
+        const response = await SaveSettings(formData);
+        if (response) {
+          setIsSubmitted(true);
+        } else {
+          setIsError(true);
+        }
+        setErrors({});
+      } catch (error) {
+        console.error("Error saving settings:", error);
+        setIsError(true);
+      }
     }
 
     setDisable(false);
   };
 
   return (
-    <div className="mt-7 w-full">
-      <form onSubmit={handleSubmit}>
+    <>
+      <form onSubmit={handleSubmit} className="mt-7 w-full">
         <div className="mb-4">
           <label className="block text-sm font-medium">First Name</label>
           <input
@@ -148,7 +166,16 @@ const SettingsForm: React.FC<Props> = ({ defaultValues }) => {
           />
         </div>
       </form>
-    </div>
+      {isSubmitted === true && (
+        <StatusMessage type="success" message="Changes Saved successfully!" />
+      )}
+      {isError === true && (
+        <StatusMessage
+          type="error"
+          message="Error saving changes. Try again!"
+        />
+      )}
+    </>
   );
 };
 
