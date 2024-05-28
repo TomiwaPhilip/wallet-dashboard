@@ -22,3 +22,48 @@ body {
 .cards-bg {
   background-color: rgb(14, 16, 24);
 }
+
+.styled-bg {
+  background-image: url("/assets/images/bg.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+*:has(.gradient-border),
+*:has(.gradient-border1) {
+  isolation: isolate;
+}
+
+.normal-gradient-border {
+  position: relative;
+  background-color: inherit;
+}
+.normal-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px -1px -1px -1px;
+  z-index: -1;
+  background-image: linear-gradient(90deg, #1f2129 0%, #979eb8 100%);
+  border-radius: inherit;
+}
+
+.gradient-border,
+.gradient-border1 {
+  position: relative;
+  background-color: inherit;
+}
+.gradient-border:hover::before,
+.gradient-border1::before {
+  content: "";
+  position: absolute;
+  inset: -1px -1px -1px -1px;
+  z-index: -1;
+  background-image: linear-gradient(90deg, #1f2129 0%, #979eb8 100%);
+  border-radius: inherit;
+}
+
+.gradient {
+  background: linear-gradient(90deg, #6b4b9f 0%, #e60b8e 50%);
+}

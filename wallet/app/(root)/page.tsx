@@ -1,7 +1,15 @@
 import HomePage from "@/components/pages/Home";
-import Image from "next/image";
+import getSession from "@/lib/actions/server-hooks/getsession.action";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+
+  const session = await getSession();
+
+  if(session.isOnboarded != true) {
+    redirect("/settings")
+  }
+  
   return (
     <main className="">
       <HomePage />

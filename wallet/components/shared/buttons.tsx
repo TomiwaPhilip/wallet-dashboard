@@ -3,6 +3,7 @@
 import React from "react";
 import { RiLoader4Line } from "react-icons/ri";
 import { handleGoogleLogin } from "@/lib/actions/login.action";
+import Image from "next/image";
 
 const GoogleButton: React.FC = () => {
   return (
@@ -45,6 +46,49 @@ export function NoOutlineButtonBig({
       onClick={onclick}
     >
       {loading ? <RiLoader4Line className="animate-spin text-2xl" /> : name}
+    </button>
+  );
+}
+
+function BtnName({ name }: { name: string }) {
+  return (
+    <div className="flex items-center justify-center gap-3">
+      <Image
+        src={"/assets/icons/book.svg"}
+        alt="save_icon"
+        height={25}
+        width={25}
+      />
+      {name}
+    </div>
+  );
+}
+
+export function OutlineButtonSm({
+  name,
+  type,
+  disabled,
+  loading,
+  onclick,
+}: {
+  name: string;
+  type: "submit" | "button";
+  disabled?: boolean;
+  loading?: boolean;
+  onclick?: () => void;
+}) {
+  return (
+    <button
+      type={type}
+      className="mt-8 bg-[#263382] rounded-full flex items-center justify-center text-center py-2 px-4"
+      disabled={disabled}
+      onClick={onclick}
+    >
+      {loading ? (
+        <RiLoader4Line className="animate-spin text-2xl" />
+      ) : (
+        <BtnName name={name} />
+      )}
     </button>
   );
 }
