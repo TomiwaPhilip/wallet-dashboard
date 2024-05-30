@@ -92,3 +92,54 @@ export function OutlineButtonSm({
     </button>
   );
 }
+
+interface NoOutlineButtonIconProps {
+  name: string;
+  type: "submit" | "button";
+  disabled?: boolean;
+  loading?: boolean;
+  iconSrc: string;
+  onClick?: () => void;
+  buttonClassName?: string;
+  iconClassName?: string;
+}
+
+export function NoOutlineButtonIcon({
+  name,
+  type,
+  disabled,
+  loading,
+  iconSrc,
+  onClick,
+  buttonClassName,
+  iconClassName,
+}: NoOutlineButtonIconProps) {
+  const handleClick = () => {
+    if (onClick) onClick();
+  };
+
+  return (
+    <button
+      type={type}
+      className={`bg-[#263382] rounded-lg flex items-center justify-center text-center py-2 px-4 ${buttonClassName}`}
+      disabled={disabled}
+      onClick={handleClick}
+    >
+      <div className={`mr-2 ${iconClassName}`}>
+        <Image
+          src={iconSrc}
+          alt="Button Icon"
+          height={20}
+          width={20}
+          className="rounded-full" // Adding rounded-full class to the image
+        />
+      </div>
+      {loading ? (
+        <RiLoader4Line className="animate-spin text-2xl" />
+      ) : (
+        <span>{name}</span>
+      )}
+    </button>
+  );
+}
+

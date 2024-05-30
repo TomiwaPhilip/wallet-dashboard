@@ -72,6 +72,54 @@ export function Nav() {
   );
 }
 
+interface TabsProps {
+  isAccountActive: boolean;
+  isPaymentActive: boolean;
+  onTabChange: (tab: 'account' | 'payment') => void;
+}
+
+export function Tabs({ isAccountActive, isPaymentActive, onTabChange }: TabsProps) {
+  return (
+    <div className="flex justify-start items-start w-full">
+      <nav className="bg-[#0E1018] p-4 rounded-full border border-[#131621] w-full">
+        <ul className="flex items-center gap-10 w-full">
+          <li className={`gradient-border rounded-full ${isAccountActive ? "normal-gradient-border" : ""} flex-1`}>
+            <div 
+              onClick={() => onTabChange('account')}
+              className="flex items-center gap-2 bg-[#0E1018] rounded-full p-2 w-full justify-center cursor-pointer"
+            >
+              <Image
+                src="/assets/icons/account_balance_wallet.svg"
+                alt="account_icon"
+                height={25}
+                width={25}
+              />
+              Account
+            </div>
+          </li>
+          <li className={`gradient-border rounded-full ${isPaymentActive ? "normal-gradient-border" : ""} flex-1`}>
+            <div 
+              onClick={() => onTabChange('payment')}
+              className="flex items-center gap-2 bg-[#0E1018] p-2 rounded-full w-full justify-center cursor-pointer"
+            >
+              <Image
+                src="/assets/icons/bubble.svg"
+                alt="transact_icon"
+                height={25}
+                width={25}
+              />
+              Transact
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  );
+}
+
+
+
+
 interface CardProps {
   children: ReactNode;
 }
@@ -127,3 +175,31 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
     </div>
   );
 };
+
+interface TransactionBarProps {
+  text: string;
+  type: 'received' | 'sent';
+}
+
+export function TransactionBar({ text, type }: TransactionBarProps) {
+  const isReceived = type === 'received';
+  const backgroundColor = isReceived ? 'bg-[#2B3993]' : 'bg-[#464D67]';
+  const iconSrc = isReceived 
+    ? '/assets/icons/arrow_circle_right.svg' 
+    : '/assets/icons/arrow_circle_left.svg';
+  const iconAlt = isReceived 
+    ? 'arrow_right_icon' 
+    : 'arrow_left_icon';
+
+  return (
+    <div className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}>
+      <Image
+        src={iconSrc}
+        alt={iconAlt}
+        height={25}
+        width={25}
+      />
+      <p>{text}</p>
+    </div>
+  );
+}

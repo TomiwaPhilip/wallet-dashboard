@@ -32,7 +32,7 @@ export async function SaveSettings({
       lastname: lastName,
       email: email,
       phoneNumber: phoneNumber,
-      onbaorded: true,
+      onboarded: true,
     });
 
     if (updatedUser) {
