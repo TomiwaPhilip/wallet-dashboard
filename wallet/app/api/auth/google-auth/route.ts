@@ -7,6 +7,8 @@ import {
 import connectToDB from "@/lib/model/database";
 import User from "@/lib/schemas/user";
 import { saveSession } from "@/lib/utils";
+import { generateMemoTag } from "@/lib/helpers/utils";
+import Memo from "@/lib/schemas/memo";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   if (!req.nextUrl) {
@@ -39,6 +41,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
       // Check if the user already exists in the User collection with the correct login type
       const existingUser = await User.findOne({ email: email });
+      const existingMemo = await Memo.findOne({ user: existingUser._id });
 
       if (existingUser) {
         // Create session data
@@ -48,6 +51,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           firstName: existingUser.firstname,
           lastName: existingUser.lastname,
           image: existingUser.image, // Initialize image as an empty string
+          memo: existingMemo.memo,
           walletBalance: existingUser.walletBalance,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
@@ -98,6 +102,13 @@ export async function GET(req: NextRequest, res: NextResponse) {
           loginType: "google", // or the appropriate login type
         });
 
+        const memo = generateMemoTag();
+
+        const newMemo = await Memo.create({
+          memo: memo,
+          user: newUser._id,
+        });
+
         // Create session data
         const sessionData = {
           userId: newUser._id.toString(),
@@ -105,6 +116,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           image: newUser.image,
+          memo: newMemo.memo,
           walletBalance: newUser.walletBalance,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
