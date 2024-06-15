@@ -26,6 +26,6 @@ const WalletSchema = new Schema({
     },
 });
 
-const Wallet = models.Wallet || model("Walet", WalletSchema);
+const Wallet = models.Wallet || model("Wallet", WalletSchema);
 
 export default Wallet;

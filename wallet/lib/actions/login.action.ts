@@ -24,7 +24,7 @@ export async function signIn(email: string) {
     // Generate token and URL for verification
     const { token, generatedAt, expiresIn } = generateToken();
 
-    const url = `https://special-orbit-5gq94wwpj7pfvwg4-3000.app.github.dev/auth/verify?token=${token}`;
+    const url = `https://special-orbit-5gq94wwpj7pfvwg4-3001.app.github.dev/auth/verify?token=${token}`;
 
     // Send email with resend.dev
     await sendVerificationRequest({ url: url, email: email });
@@ -80,11 +80,12 @@ export async function verifyUserToken(token: string): Promise<boolean> {
       // Check if the user already exists in the Role collection with the correct login type
       const existingUser = await User.findOne({ email: email });
 
-      const existingMemo = await Memo.findOne({ user: existingUser._id });
-
-      const existingWallet = await Wallet.findOne({ user: existingUser._id });
-
       if (existingUser) {
+
+        const existingMemo = await Memo.findOne({ user: existingUser._id });
+
+        const existingWallet = await Wallet.findOne({ user: existingUser._id });
+        
         // Create session data
         let sessionData = {
           userId: existingUser._id.toString(),

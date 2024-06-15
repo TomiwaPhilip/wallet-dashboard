@@ -42,10 +42,11 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
       // Check if the user already exists in the User collection with the correct login type
       const existingUser = await User.findOne({ email: email });
-      const existingMemo = await Memo.findOne({ user: existingUser._id });
-      const existingWallet = await Wallet.findOne({ user: existingUser._id });
 
       if (existingUser) {
+        const existingMemo = await Memo.findOne({ user: existingUser._id });
+        const existingWallet = await Wallet.findOne({ user: existingUser._id });
+        
         // Create session data
         let sessionData = {
           userId: existingUser._id.toString(),
