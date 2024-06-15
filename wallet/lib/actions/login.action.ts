@@ -12,6 +12,8 @@ import User from "../schemas/user";
 import getSession from "./server-hooks/getsession.action";
 import { getGoogleAuthUrl } from "@/lib/actions/server-hooks/google-auth.action";
 import { redirect } from "next/navigation";
+import Memo from "../schemas/memo";
+import { generateMemoTag } from "../helpers/utils";
 
 export async function signIn(email: string) {
   console.log("I want to send emails");
@@ -21,7 +23,7 @@ export async function signIn(email: string) {
     // Generate token and URL for verification
     const { token, generatedAt, expiresIn } = generateToken();
 
-    const url = `https://l4t55h-3000.csb.app/auth/verify?token=${token}`;
+    const url = `https://special-orbit-5gq94wwpj7pfvwg4-3000.app.github.dev/auth/verify?token=${token}`;
 
     // Send email with resend.dev
     await sendVerificationRequest({ url: url, email: email });
@@ -77,6 +79,8 @@ export async function verifyUserToken(token: string): Promise<boolean> {
       // Check if the user already exists in the Role collection with the correct login type
       const existingUser = await User.findOne({ email: email });
 
+      const existingMemo = await Memo.findOne({ user: existingUser._id });
+
       if (existingUser) {
         // Create session data
         let sessionData = {
@@ -86,6 +90,7 @@ export async function verifyUserToken(token: string): Promise<boolean> {
           lastName: existingUser.lastname,
           image: existingUser.image, // Initialize image as an empty string
           walletBalance: existingUser.walletBalance,
+          memo: existingMemo.memo,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
           isLoggedIn: true,
@@ -108,11 +113,19 @@ export async function verifyUserToken(token: string): Promise<boolean> {
           loginType: "email", // or the appropriate login type
         });
 
+        const memo = generateMemoTag();
+
+        const newMemo = await Memo.create({
+          memo: memo,
+          user: newUser._id,
+        });
+
         // Create session data
         const sessionData = {
           userId: newUser._id.toString(),
           email: newUser.email,
           walletBalance: newUser.walletBalance,
+          memo: newMemo.memo,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
           isLoggedIn: true,
