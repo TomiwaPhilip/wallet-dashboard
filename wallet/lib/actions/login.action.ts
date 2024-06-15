@@ -14,6 +14,7 @@ import { getGoogleAuthUrl } from "@/lib/actions/server-hooks/google-auth.action"
 import { redirect } from "next/navigation";
 import Memo from "../schemas/memo";
 import { generateMemoTag } from "../helpers/utils";
+import Wallet from "../schemas/wallet";
 
 export async function signIn(email: string) {
   console.log("I want to send emails");
@@ -81,6 +82,8 @@ export async function verifyUserToken(token: string): Promise<boolean> {
 
       const existingMemo = await Memo.findOne({ user: existingUser._id });
 
+      const existingWallet = await Wallet.findOne({ user: existingUser._id });
+
       if (existingUser) {
         // Create session data
         let sessionData = {
@@ -89,7 +92,7 @@ export async function verifyUserToken(token: string): Promise<boolean> {
           firstName: existingUser.firstname,
           lastName: existingUser.lastname,
           image: existingUser.image, // Initialize image as an empty string
-          walletBalance: existingUser.walletBalance,
+          walletBalance: existingWallet.balance,
           memo: existingMemo.memo,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
@@ -120,11 +123,15 @@ export async function verifyUserToken(token: string): Promise<boolean> {
           user: newUser._id,
         });
 
+        const newWallet = await Wallet.create({
+          user: newUser._id,
+        });
+
         // Create session data
         const sessionData = {
           userId: newUser._id.toString(),
           email: newUser.email,
-          walletBalance: newUser.walletBalance,
+          walletBalance: newWallet.balance,
           memo: newMemo.memo,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,

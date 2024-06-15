@@ -16,6 +16,10 @@ const WalletSchema = new Schema({
         required: true,
         default: "USDC",
     },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
     updatedAt: {
         type: Date,
         default: Date.now
