@@ -19,7 +19,7 @@ export default function HomePage() {
 
   const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-  const { data, error, isLoading } = useSWR('/api/transactions/balance', fetcher);
+  const { data, error, isLoading } = useSWR('/api/transactions/balance', fetcher, {refreshInterval: 1000});
 
   console.log(isLoading);
   if (!isLoading) {

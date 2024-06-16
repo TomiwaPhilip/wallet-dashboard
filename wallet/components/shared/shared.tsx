@@ -85,7 +85,7 @@ export function Tabs({ isAccountActive, isPaymentActive, onTabChange }: TabsProp
       <nav className="bg-[#0E1018] p-4 rounded-full border border-[#131621] w-full">
         <ul className="flex items-center gap-10 w-full">
           <li className={`gradient-border rounded-full ${isAccountActive ? "normal-gradient-border" : ""} flex-1`}>
-            <div 
+            <div
               onClick={() => onTabChange('account')}
               className="flex items-center gap-2 bg-[#0E1018] rounded-full p-2 w-full justify-center cursor-pointer"
             >
@@ -99,7 +99,7 @@ export function Tabs({ isAccountActive, isPaymentActive, onTabChange }: TabsProp
             </div>
           </li>
           <li className={`gradient-border rounded-full ${isPaymentActive ? "normal-gradient-border" : ""} flex-1`}>
-            <div 
+            <div
               onClick={() => onTabChange('payment')}
               className="flex items-center gap-2 bg-[#0E1018] p-2 rounded-full w-full justify-center cursor-pointer"
             >
@@ -165,9 +165,8 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
 
   return (
     <div
-      className={`fixed top-5 right-5 p-3 rounded-md text-white flex items-center ${
-        type === "error" ? "bg-[#E40686]" : "bg-[#5EE398]"
-      } ${isVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}
+      className={`fixed top-5 right-5 p-3 rounded-md text-white flex items-center ${type === "error" ? "bg-[#E40686]" : "bg-[#5EE398]"
+        } ${isVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}
     >
       <div className="flex-shrink-0 mr-3">
         <Image src={iconSrc} alt="Icon" width={24} height={24} />
@@ -185,11 +184,11 @@ interface TransactionBarProps {
 export function TransactionBar({ text, type }: TransactionBarProps) {
   const isReceived = type === 'received';
   const backgroundColor = isReceived ? 'bg-[#2B3993]' : 'bg-[#464D67]';
-  const iconSrc = isReceived 
-    ? '/assets/icons/arrow_circle_right.svg' 
+  const iconSrc = isReceived
+    ? '/assets/icons/arrow_circle_right.svg'
     : '/assets/icons/arrow_circle_left.svg';
-  const iconAlt = isReceived 
-    ? 'arrow_right_icon' 
+  const iconAlt = isReceived
+    ? 'arrow_right_icon'
     : 'arrow_left_icon';
 
   return (
@@ -214,5 +213,35 @@ const handleSignOut = async () => {
 export function LogOutBtn() {
   return (
     <button onClick={handleSignOut}> Logout </button>
+  );
+}
+
+interface TransactionMessageProps {
+  message: string;
+  type: boolean;
+}
+
+interface TransactionMessageProps {
+  message: string;
+  type: boolean;
+}
+
+export function TransactionMessage(props: TransactionMessageProps) {
+  const { message, type } = props;
+
+  const imageUrl = type
+    ? '/assets/icons/bubble.svg'  // URL for success image
+    : '/assets/icons/problem.svg';   // URL for error image
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center">
+      <Image
+        src={imageUrl}
+        alt={type ? 'success' : 'error'} // Alt text based on type
+        height={200}
+        width={200}
+      />
+      <p className="font-bold text-[24px] p-5"> {message} </p>
+    </div>
   );
 }

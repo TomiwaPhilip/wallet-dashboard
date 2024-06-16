@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { useSession } from "@/components/shared/session";
+import { sendFundsToUser } from "@/lib/actions/transactions/send.action";
+import { TransactionMessage } from "@/components/shared/shared";
 
 interface FormData {
   email: string;
@@ -15,6 +17,8 @@ const MilestonSend: React.FC = () => {
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState(false);
   const [disable, setDisable] = useState(false);
   const [isValid, setIsValid] = useState(false);
 
@@ -59,12 +63,23 @@ const MilestonSend: React.FC = () => {
 
       try {
         // Call your submit function here
-        // await sendEmail(formData.email);
+        const response = await sendFundsToUser({
+          receiverEmail: formData.email,
+          amount: formData.amount
+        });
+        if (response.error) {
+          setMessage(response.error);
+          setMessageType(false);
+        } else if(response.message) {
+          setMessage(response.message);
+          setMessageType(true);
+        }
         setIsSubmitted(true);
         setDisable(false);
       } catch (error) {
         console.error("Error sending email:", error);
         setDisable(false);
+        setMessage("Unable to complete transaction. Please try again!")
       }
     }
   };
@@ -72,11 +87,11 @@ const MilestonSend: React.FC = () => {
   return (
     <>
       {isSubmitted ? (
-        <div className="text-center">
-          <p className="font-bold text-[24px] p-5">
-            You have successfully joined the waitlist for early access. Now,
-            join our discord server to continue to discover more.
-          </p>
+        <div className="text-center flex items-center justify-center">
+          <TransactionMessage 
+            message={message} 
+            type={messageType} 
+          />
         </div>
       ) : (
         <>
@@ -123,6 +138,7 @@ const MilestonSend: React.FC = () => {
                 name="Send to User"
                 type="submit"
                 disabled={disable}
+                loading={disable}
                 iconSrc="/assets/icons/arrow_circle_left.svg"
                 buttonClassName="w-full"
               />
