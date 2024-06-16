@@ -1,18 +1,31 @@
 "use client";
 
 import { useState } from "react";
+import useSWR from 'swr';
 
 import {
   NoOutlineButtonBig,
   NoOutlineButtonIcon,
 } from "@/components/shared/buttons";
 import { signOut } from "@/lib/actions/auth/login.action";
-import { Card2, Tabs, TransactionBar } from "../shared/shared";
+import { fetchWalletBalance } from "@/lib/actions/transactions/balance.action";
+import { Card2, LogOutBtn, Tabs, TransactionBar } from "../shared/shared";
 import Modal from "../shared/Modal";
 import MilestonSend from "../forms/transactions/MilestonSend";
 import ExternalSend from "../forms/transactions/ExternalSend";
+import { RiLoader4Line } from "react-icons/ri";
 
 export default function HomePage() {
+
+  const fetcher = (url: string) => fetch(url).then(res => res.json());
+
+  const { data, error, isLoading } = useSWR('/api/transactions/balance', fetcher);
+
+  console.log(isLoading);
+  if (!isLoading) {
+    console.log(data);
+  }
+
   const [activeTab, setActiveTab] = useState<"account" | "payment">("account");
 
   const handleTabChange = (tab: "account" | "payment") => {
@@ -62,13 +75,19 @@ export default function HomePage() {
               {activeTab === "account" ? (
                 <>
                   <h3 className="font-medium text-[20px]">Account Balance</h3>
-                  <p className="mt-[4rem] font-bold text-[40px] mb-10">
-                    $450,987.65
-                  </p>
-                  <TransactionBar
-                    type="received"
-                    text="Last Received Payment: $12,000..."
-                  />
+                  {isLoading ? (
+                    <RiLoader4Line className="animate-spin text-2xl mb-10" />
+                  ) : (
+                    <p className="mt-[4rem] font-bold text-[40px] mb-10">
+                      ${data.balance.toFixed(2)} {/* Render balance when data is available */}
+                    </p>
+                  )}
+                  {!isLoading && (
+                    <TransactionBar
+                      type="received"
+                      text={`Last Received Payment: will do this`} // Example assuming lastPayment is a field in your data
+                    />
+                  )}
                 </>
               ) : (
                 <div className="flex-col items-center justify-center gap-10">
@@ -122,6 +141,7 @@ export default function HomePage() {
           </Card2>
         </div>
       </div>
+      <LogOutBtn />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <MilestonSend />
       </Modal>

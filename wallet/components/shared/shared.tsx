@@ -4,6 +4,7 @@ import React, { ReactNode, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "@/lib/actions/auth/login.action";
 
 export function Nav() {
   const pathname = usePathname();
@@ -201,5 +202,17 @@ export function TransactionBar({ text, type }: TransactionBarProps) {
       />
       <p>{text}</p>
     </div>
+  );
+}
+
+
+const handleSignOut = async () => {
+  await signOut();
+};
+
+
+export function LogOutBtn() {
+  return (
+    <button onClick={handleSignOut}> Logout </button>
   );
 }

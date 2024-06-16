@@ -1,5 +1,7 @@
-import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import React, { useState } from "react";
+
+import { NoOutlineButtonIcon } from "@/components/shared/buttons";
+import { useSession } from "@/components/shared/session";
 
 interface FormData {
   usdtNetwork: string;
@@ -17,6 +19,8 @@ const ExternalSend: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [disable, setDisable] = useState(false);
   const [isValid, setIsValid] = useState(false);
+
+  const session = useSession();
 
   const validate = (data: FormData) => {
     const newErrors: Partial<FormData> = {};
@@ -143,7 +147,7 @@ const ExternalSend: React.FC = () => {
             </div>
 
             <p className="text-[#979EB8] text-[16px] mb-10">
-              Available Balance: 450,000 USDT
+              Available Balance: ${session?.walletBalance?.toFixed(2)} USDT
             </p>
 
             <div className="flex items-center justify-center">
