@@ -1,7 +1,7 @@
 "use server";
-import getSession from "./server-hooks/getsession.action";
-import connectToDB from "../model/database";
-import User from "../schemas/user";
+import getSession from "../server-hooks/getsession.action";
+import connectToDB from "../../model/database";
+import User from "../../schemas/user";
 
 interface SaveSettingsProps {
   firstName: string;

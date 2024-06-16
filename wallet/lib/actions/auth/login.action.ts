@@ -1,20 +1,20 @@
 "use server";
 
-import VerificationToken from "../schemas/emailTokenSchema";
+import VerificationToken from "../../schemas/emailTokenSchema";
 import {
   generateToken,
   sendVerificationRequest,
   verifyToken,
   saveSession,
-} from "../utils";
-import connectToDB from "../model/database";
-import User from "../schemas/user";
-import getSession from "./server-hooks/getsession.action";
+} from "../../utils";
+import connectToDB from "../../model/database";
+import User from "../../schemas/user";
+import getSession from "../server-hooks/getsession.action";
 import { getGoogleAuthUrl } from "@/lib/actions/server-hooks/google-auth.action";
 import { redirect } from "next/navigation";
-import Memo from "../schemas/memo";
-import { generateMemoTag } from "../helpers/utils";
-import Wallet from "../schemas/wallet";
+import Memo from "../../schemas/memo";
+import { generateMemoTag } from "../../helpers/utils";
+import Wallet from "../../schemas/wallet";
 
 export async function signIn(email: string) {
   console.log("I want to send emails");

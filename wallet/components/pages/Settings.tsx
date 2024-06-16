@@ -7,7 +7,7 @@ import { Card2 } from "../shared/shared";
 import {
   UserDetails,
   getUserDetailsWithImage,
-} from "@/lib/actions/settings.action";
+} from "@/lib/actions/auth/settings.action";
 
 export default function SettingsPage() {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);

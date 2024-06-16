@@ -6,7 +6,7 @@ import {
   NoOutlineButtonBig,
   NoOutlineButtonIcon,
 } from "@/components/shared/buttons";
-import { signOut } from "@/lib/actions/login.action";
+import { signOut } from "@/lib/actions/auth/login.action";
 import { Card2, Tabs, TransactionBar } from "../shared/shared";
 import Modal from "../shared/Modal";
 import MilestonSend from "../forms/transactions/MilestonSend";

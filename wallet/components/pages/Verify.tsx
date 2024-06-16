@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { RiLoader4Line } from "react-icons/ri";
 import { useSearchParams } from "next/navigation";
-import { verifyUserToken } from "@/lib/actions/login.action";
+import { verifyUserToken } from "@/lib/actions/auth/login.action";
 import { NoOutlineButtonBig } from "@/components/shared/buttons";
 
 export default function VerifyPage() {
