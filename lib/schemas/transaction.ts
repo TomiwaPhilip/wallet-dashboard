@@ -1,7 +1,7 @@
 import { Schema, model, models, Document, Types } from "mongoose";
 
 // Define enum for transaction type
-const TransactionType = Object.freeze({
+export const TransactionType = Object.freeze({
     RECEIVED: 'received',
     SENT: 'sent'
 });
@@ -43,7 +43,7 @@ const TransactionSchema = new Schema<ITransaction>({
     },
     currency: {
         type: String,
-        required: true
+        default: 'USDC'
     },
     timestamp: {
         type: Date,
