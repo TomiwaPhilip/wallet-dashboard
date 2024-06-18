@@ -12,7 +12,7 @@ import {
     clusterApiUrl,
     VersionedTransaction,
     TransactionMessage,
-    Transaction,
+    // Transaction,
     LAMPORTS_PER_SOL,
     SendTransactionError,
     // ConfirmOptions,
@@ -29,7 +29,7 @@ import {
     TokenInvalidAccountOwnerError,
     ASSOCIATED_TOKEN_PROGRAM_ID,
   } from '@solana/spl-token';
-  
+
 
 interface SendFundsToMilestonUserParams {
     receiverEmail: string;
@@ -106,12 +106,32 @@ export async function sendFundsToMilestonUser(params: SendFundsToMilestonUserPar
 
 interface SendFundsToExternalWalletParams {
     walletAddress: string;
-    usdtNetwork: string;
+    usdcNetwork: string;
     amount: string;
 }
 
 export async function sendFundsToExternalWallet(params: SendFundsToExternalWalletParams) {
     try {
+
+        const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+        const usdcMintAddress = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'); // USDC Mint Address (Dev Net)
+
+        // const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
+        const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
+        
+        let ownerStuff;
+
+        if (!process.env.publicKey || !process.env.secretKey) {
+            return {error: "Invalid Keys"};
+        } else {
+            ownerStuff = {
+                publicKey: process.env.publicKey,
+                secretKey: process.env.secretKey,
+            };
+        };
+
+        const owner = Keypair.fromSecretKey(Buffer.from(ownerStuff.secretKey, 'hex'));
+    
         // Ensure the database connection is established
         await connectToDB();
 
@@ -136,7 +156,41 @@ export async function sendFundsToExternalWallet(params: SendFundsToExternalWalle
         // Fetch receiver's wallet
         const receiverWallet = params.walletAddress;
 
+        const receiverPublicKey = new PublicKey(receiverWallet)
+
         // Send the amount Onchain 
+        const sourceTokenAccount = await getAssociatedTokenAddress(
+            usdcMintAddress,
+            owner.publicKey,
+        );
+        const destinationTokenAccount = await getAssociatedTokenAddress(
+            usdcMintAddress,
+            receiverPublicKey,
+        );
+      
+        const instructions = [
+            createTransferInstruction(
+              sourceTokenAccount,
+              destinationTokenAccount,
+              owner.publicKey,
+              amountToSend * 10 ** 6, // Assuming USDC has 6 decimals
+              [],
+              TOKEN_PROGRAM_ID,
+            ),
+        ];
+      
+        const { blockhash } = await connection.getLatestBlockhash();
+        const message = new TransactionMessage({
+            payerKey: owner.publicKey,
+            recentBlockhash: blockhash,
+            instructions,
+        }).compileToV0Message();
+      
+        const transaction = new VersionedTransaction(message);
+        transaction.sign([owner]);
+      
+        const signature = await connection.sendTransaction(transaction);
+        await connection.confirmTransaction(signature, 'confirmed');
 
         // Update sender's wallet balance (subtract amount)
         senderWallet.balance -= amountToSend;

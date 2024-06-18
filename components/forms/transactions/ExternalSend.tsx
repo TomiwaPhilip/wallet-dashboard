@@ -3,16 +3,17 @@ import React, { useState } from "react";
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { useSession } from "@/components/shared/session";
 import { TransactionMessage } from "@/components/shared/shared";
+import { sendFundsToExternalWallet } from "@/lib/actions/transactions/send.action";
 
 interface FormData {
-  usdtNetwork: string;
+  usdcNetwork: string;
   walletAddress: string;
   amount: string;
 }
 
 const ExternalSend: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    usdtNetwork: "",
+    usdcNetwork: "",
     walletAddress: "",
     amount: "0",
   });
@@ -28,8 +29,8 @@ const ExternalSend: React.FC = () => {
   const validate = (data: FormData) => {
     const newErrors: Partial<FormData> = {};
 
-    if (!data.usdtNetwork) {
-      newErrors.usdtNetwork = "USDT Network is required";
+    if (!data.usdcNetwork) {
+      newErrors.usdcNetwork = "usdc Network is required";
     }
 
     if (!data.walletAddress.trim()) {
@@ -68,8 +69,9 @@ const ExternalSend: React.FC = () => {
 
       try {
         // Call your submit function here
-        const response = await sendFundsToMilestonUser({
-          receiverEmail: formData.email,
+        const response = await sendFundsToExternalWallet({
+          walletAddress: formData.walletAddress,
+          usdcNetwork: formData.usdcNetwork,
           amount: formData.amount,
         });
         if (response.error) {
@@ -105,23 +107,24 @@ const ExternalSend: React.FC = () => {
           </p>
           <form onSubmit={handleSubmit} className="w-full mx-auto">
             <div className="mb-4">
-              <label className="block text-sm font-medium">USDT Network</label>
+              <label className="block text-sm font-medium">USDC Network</label>
               <select
-                name="usdtNetwork"
-                value={formData.usdtNetwork}
+                name="usdcNetwork"
+                value={formData.usdcNetwork}
                 onChange={handleChange}
-                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.usdtNetwork ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8]`}
+                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.usdcNetwork ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8]`}
               >
-                <option value="">Select USDT Network</option>
+                <option value="">Select USDC Network</option>
+                <option value="Ethereum">Solana</option>
                 <option value="Ethereum">Ethereum</option>
                 <option value="Binance Smart Chain">Binance Smart Chain</option>
                 <option value="TRON">TRON</option>
                 <option value="TON">TON</option>
                 <option value="Avaxc">Avax Chain</option>
               </select>
-              {errors.usdtNetwork && (
+              {errors.usdcNetwork && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.usdtNetwork}
+                  {errors.usdcNetwork}
                 </p>
               )}
             </div>
@@ -161,7 +164,7 @@ const ExternalSend: React.FC = () => {
             </div>
 
             <p className="text-[#979EB8] text-[16px] mb-10">
-              Available Balance: ${session?.walletBalance?.toFixed(2)} USDT
+              Available Balance: ${session?.walletBalance?.toFixed(2)} USDC
             </p>
 
             <div className="flex items-center justify-center">
