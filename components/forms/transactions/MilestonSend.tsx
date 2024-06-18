@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { useSession } from "@/components/shared/session";
-import { sendFundsToUser } from "@/lib/actions/transactions/send.action";
+import { sendFundsToMilestonUser } from "@/lib/actions/transactions/send.action";
 import { TransactionMessage } from "@/components/shared/shared";
 
 interface FormData {
@@ -63,7 +63,7 @@ const MilestonSend: React.FC = () => {
 
       try {
         // Call your submit function here
-        const response = await sendFundsToUser({
+        const response = await sendFundsToMilestonUser({
           receiverEmail: formData.email,
           amount: formData.amount
         });
