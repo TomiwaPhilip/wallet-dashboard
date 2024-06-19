@@ -69,6 +69,8 @@ const ExternalSend: React.FC = () => {
 
       try {
         // Call your submit function here
+        console.log("Forms:")
+        console.log(formData)
         const response = await sendFundsToExternalWallet({
           walletAddress: formData.walletAddress,
           usdcNetwork: formData.usdcNetwork,
@@ -115,11 +117,10 @@ const ExternalSend: React.FC = () => {
                 className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.usdcNetwork ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8]`}
               >
                 <option value="">Select USDC Network</option>
-                <option value="Ethereum">Solana</option>
+                <option value="Solana">Solana</option>
                 <option value="Ethereum">Ethereum</option>
                 <option value="Binance Smart Chain">Binance Smart Chain</option>
                 <option value="TRON">TRON</option>
-                <option value="TON">TON</option>
                 <option value="Avaxc">Avax Chain</option>
               </select>
               {errors.usdcNetwork && (

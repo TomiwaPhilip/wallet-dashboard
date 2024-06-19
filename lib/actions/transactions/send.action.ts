@@ -4,32 +4,20 @@ import connectToDB from "@/lib/model/database";
 import getSession from "../server-hooks/getsession.action";
 import Wallet from "@/lib/schemas/wallet";
 import User from "@/lib/schemas/user";
-import Transaction, { TransactionType } from "@/lib/schemas/transaction"; // Adjust import as per your schema file
+import TransactionSignature from "@/lib/schemas/transactionSignature";
+import Transaction, { TransactionType } from "@/lib/schemas/transaction"; // Adjust import as per your schema file\
 import {
     Connection,
     Keypair,
     PublicKey,
     clusterApiUrl,
-    VersionedTransaction,
-    TransactionMessage,
-    // Transaction,
-    LAMPORTS_PER_SOL,
-    SendTransactionError,
-    // ConfirmOptions,
   } from '@solana/web3.js';
-  import {
+import {
     getAssociatedTokenAddress,
-    getOrCreateAssociatedTokenAccount,
-    createAssociatedTokenAccount,
-    getAccount,
-    TOKEN_PROGRAM_ID,
-    createTransferInstruction,
-    createAssociatedTokenAccountInstruction,
-    TokenAccountNotFoundError,
-    TokenInvalidAccountOwnerError,
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-  } from '@solana/spl-token';
+    transfer,
+} from '@solana/spl-token';
 
+import { hexToBytes } from "./utils";
 
 interface SendFundsToMilestonUserParams {
     receiverEmail: string;
@@ -111,13 +99,11 @@ interface SendFundsToExternalWalletParams {
 }
 
 export async function sendFundsToExternalWallet(params: SendFundsToExternalWalletParams) {
+    console.log(params)
     try {
-
+        console.log(params)
         const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
         const usdcMintAddress = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'); // USDC Mint Address (Dev Net)
-
-        // const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
-        const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey("ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL");
         
         let ownerStuff;
 
@@ -130,7 +116,11 @@ export async function sendFundsToExternalWallet(params: SendFundsToExternalWalle
             };
         };
 
-        const owner = Keypair.fromSecretKey(Buffer.from(ownerStuff.secretKey, 'hex'));
+        console.log(ownerStuff);
+        const ownerSecretBytes = hexToBytes(ownerStuff.secretKey);
+        console.log(ownerSecretBytes);
+        const owner = Keypair.fromSecretKey(ownerSecretBytes);
+        console.log(owner);
     
         // Ensure the database connection is established
         await connectToDB();
@@ -140,6 +130,8 @@ export async function sendFundsToExternalWallet(params: SendFundsToExternalWalle
         if (!senderSession || !senderSession.userId) {
             return { error: "Sender is not authenticated" };
         }
+
+        console.log(senderSession)
 
         // Fetch sender's wallet
         const senderWallet = await Wallet.findOne({ user: senderSession.userId });
@@ -158,40 +150,49 @@ export async function sendFundsToExternalWallet(params: SendFundsToExternalWalle
 
         const receiverPublicKey = new PublicKey(receiverWallet)
 
-        // Send the amount Onchain 
-        const sourceTokenAccount = await getAssociatedTokenAddress(
-            usdcMintAddress,
-            owner.publicKey,
-        );
-        const destinationTokenAccount = await getAssociatedTokenAddress(
-            usdcMintAddress,
-            receiverPublicKey,
-        );
-      
-        const instructions = [
-            createTransferInstruction(
-              sourceTokenAccount,
-              destinationTokenAccount,
-              owner.publicKey,
-              amountToSend * 10 ** 6, // Assuming USDC has 6 decimals
-              [],
-              TOKEN_PROGRAM_ID,
-            ),
-        ];
-      
-        const { blockhash } = await connection.getLatestBlockhash();
-        const message = new TransactionMessage({
-            payerKey: owner.publicKey,
-            recentBlockhash: blockhash,
-            instructions,
-        }).compileToV0Message();
-      
-        const transaction = new VersionedTransaction(message);
-        transaction.sign([owner]);
-      
-        const signature = await connection.sendTransaction(transaction);
-        await connection.confirmTransaction(signature, 'confirmed');
+        console.log(receiverPublicKey)
 
+        try {
+            // Send the amount Onchain 
+            const sourceTokenAccount = await getAssociatedTokenAddress(
+                usdcMintAddress,
+                owner.publicKey,
+            );
+
+            console.log(sourceTokenAccount )
+            const receiverTokenAccount = await getAssociatedTokenAddress(
+                usdcMintAddress,
+                receiverPublicKey,
+            );
+
+            console.log("Did you touch here?")
+            console.log(receiverTokenAccount)
+    
+            const signature = await transfer(
+                connection,
+                owner,
+                sourceTokenAccount,
+                receiverTokenAccount,
+                owner.publicKey,
+                amountToSend * 10 ** 6,
+            );
+            // Log the transaction signature
+            console.log(`Transaction signature: ${signature}`);
+
+            if (signature) {
+                const saveSignature = TransactionSignature.create({
+                    user: senderSession.userId,
+                    transactionType: "sent",
+                    signature: signature,
+                    timeStamp: new Date(),
+                });
+
+                console.log(saveSignature);
+            }
+        } catch (error) {
+            return {error: "Error initiating transaction!"}
+        }
+      
         // Update sender's wallet balance (subtract amount)
         senderWallet.balance -= amountToSend;
         await senderWallet.save();
