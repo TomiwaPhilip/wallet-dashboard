@@ -159,6 +159,7 @@ export async function verifyUserToken(token: string): Promise<boolean> {
 }
 
 export const signOut = async () => {
+  console.log("Okay, you caught me!")
   const session = await getSession();
   session.destroy();
   redirect("/auth/signin");

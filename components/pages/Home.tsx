@@ -7,9 +7,7 @@ import {
   NoOutlineButtonBig,
   NoOutlineButtonIcon,
 } from "@/components/shared/buttons";
-import { signOut } from "@/lib/actions/auth/login.action";
-import { fetchWalletBalance } from "@/lib/actions/transactions/balance.action";
-import { Card2, LogOutBtn, Tabs, TransactionBar } from "../shared/shared";
+import { Card2, Tabs } from "../shared/shared";
 import Modal from "../shared/Modal";
 import MilestonSend from "../forms/transactions/MilestonSend";
 import ExternalSend from "../forms/transactions/ExternalSend";
@@ -57,9 +55,6 @@ export default function HomePage() {
     setIsModalOpen2(null);
   };
 
-  // const handleSignOut = async () => {
-  //   await signOut();
-  // };
   return (
     <>
       <div className="grid grid-cols-[40%_60%] gap-7">
@@ -120,7 +115,6 @@ export default function HomePage() {
           </Card2>
         </div>
       </div>
-      <LogOutBtn />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <MilestonSend />
       </Modal>

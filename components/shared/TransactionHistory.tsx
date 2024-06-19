@@ -20,6 +20,10 @@ export default function TransactionHistory({ renderAll = true, specificIndex = 0
     return <div>Error loading transactions.</div>;
   }
 
+  if (data === false) {
+    return <div>You have not performed any transactions yet.</div>;
+  }
+
   const transactions = data?.history || [];
 
   if (!renderAll && transactions[specificIndex]) {
