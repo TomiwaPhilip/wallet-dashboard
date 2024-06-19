@@ -116,11 +116,8 @@ export async function sendFundsToExternalWallet(params: SendFundsToExternalWalle
             };
         };
 
-        console.log(ownerStuff);
         const ownerSecretBytes = hexToBytes(ownerStuff.secretKey);
-        console.log(ownerSecretBytes);
         const owner = Keypair.fromSecretKey(ownerSecretBytes);
-        console.log(owner);
     
         // Ensure the database connection is established
         await connectToDB();
