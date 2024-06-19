@@ -199,7 +199,7 @@ export function TransactionBar({ text, type }: TransactionBarProps) {
         height={25}
         width={25}
       />
-      <p>{text}</p>
+      <p className="transaction-text">{text}</p>
     </div>
   );
 }

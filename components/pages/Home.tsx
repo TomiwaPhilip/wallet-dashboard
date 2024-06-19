@@ -14,6 +14,7 @@ import Modal from "../shared/Modal";
 import MilestonSend from "../forms/transactions/MilestonSend";
 import ExternalSend from "../forms/transactions/ExternalSend";
 import { RiLoader4Line } from "react-icons/ri";
+import TransactionHistory from "../shared/TransactionHistory";
 
 export default function HomePage() {
 
@@ -83,10 +84,7 @@ export default function HomePage() {
                     </p>
                   )}
                   {!isLoading && (
-                    <TransactionBar
-                      type="received"
-                      text={`Last Received Payment: will do this`} // Example assuming lastPayment is a field in your data
-                    />
+                    <TransactionHistory renderAll={false} specificIndex={0} />
                   )}
                 </>
               ) : (
@@ -118,26 +116,7 @@ export default function HomePage() {
             <h3 className="font-medium text-[20px] mb-5">
               Transaction History
             </h3>
-            <TransactionBar
-              type="received"
-              text="Received $12,000.50 from Jones Durover at 12:40PM"
-            />
-            <TransactionBar
-              type="sent"
-              text="Sent $120,000.50 to Felnsusis Guirome at 05:40AM"
-            />
-            <TransactionBar
-              type="received"
-              text="Received $30,895.50 from Patrick Frendy Zone at 12-06-2024"
-            />
-            <TransactionBar
-              type="sent"
-              text="Sent $2,000.50 to John Doe Tee at 11-06-2024"
-            />
-            <TransactionBar
-              type="sent"
-              text="Sent $12,000.50 to Jones Durover at 11-06-2024"
-            />
+            <TransactionHistory />
           </Card2>
         </div>
       </div>
