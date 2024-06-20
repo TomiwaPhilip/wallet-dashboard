@@ -24,6 +24,11 @@ export function Nav() {
       name: "New User",
       profileImage: `${session?.image}`,
     };
+  } else if (session?.firstName && session?.lastName && session?.image) {
+    user = {
+      name: `${session?.firstName} ${session?.lastName}`,
+      profileImage: `${session?.image}`,
+    };    
   }
   else {
     user = {
