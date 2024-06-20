@@ -24,7 +24,7 @@ export async function signIn(email: string) {
     // Generate token and URL for verification
     const { token, generatedAt, expiresIn } = generateToken();
 
-    const url = `https://special-orbit-5gq94wwpj7pfvwg4-3001.app.github.dev/auth/verify?token=${token}`;
+    const url = `https://public-mileston.vercel.app/auth/verify?token=${token}`;
 
     // Send email with resend.dev
     await sendVerificationRequest({ url: url, email: email });
