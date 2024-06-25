@@ -59,7 +59,7 @@ export async function verifyUserTokenAndLogin(token: string) {
 
     if (!existingToken) {
       console.log("Token not found in DB");
-      return {error: "Invalid Credentials!"}; // Token not found in the database
+      return { error: "Invalid Credentials!" }; // Token not found in the database
     }
 
     // Check if the token has expired
@@ -72,7 +72,7 @@ export async function verifyUserTokenAndLogin(token: string) {
       console.log("Token has expired");
       // If the token has expired, delete the token document from the database
       await VerificationToken.findOneAndDelete({ token: token });
-      return {error: "Invalid token"};; // Token has expired
+      return { error: "Invalid token" };; // Token has expired
     }
 
     const email = existingToken.email;
@@ -108,7 +108,7 @@ export async function verifyUserTokenAndLogin(token: string) {
         await VerificationToken.findOneAndDelete({ token: token });
 
         // Redirect to the dashboard or appropriate page
-        return {newUser: false};
+        return { newUser: false };
       } else {
         // User does not exist, create a new organization and role with the received email
 
@@ -145,15 +145,42 @@ export async function verifyUserTokenAndLogin(token: string) {
         await VerificationToken.findOneAndDelete({ token: token });
 
         // Redirect to the dashboard or appropriate page
-        return {newUser: true};
+        return { newUser: true };
       }
     } catch (error: any) {
       console.error("Error logging user in", error.message);
-      return {error: "Error logging in. Try again later!"};
+      return { error: "Error logging in. Try again later!" };
     }
   } catch (error: any) {
     console.error("Error verifying token:", error.message);
-    return {error: "Error verifying token. Try again later!"};
+    return { error: "Error verifying token. Try again later!" };
+  }
+}
+
+export async function getMnemonic() {
+  await connectToDB();
+
+  const session = await getSession();
+  const userId = session.userId;
+
+  try {
+      // Fetch only the deletedKeyPart field for the user
+      const wallet = await Wallet.findOne({ _id: userId }, { deletedKeyPart: 1 });
+
+      if (!wallet) {
+          return {error: "Wallet not found"};
+      }
+
+      // Extract the secret key (deletedKeyPart)
+      const secretKey = wallet.deletedKeyPart;
+
+      // Clear the secret key from the database
+      await Wallet.updateOne({ _id: userId }, { $unset: { deletedKeyPart: '' } });
+
+      return { secretKey: secretKey };
+  } catch (error) {
+      console.error('Error in getMnemonic:', error);
+      return { error: 'Error retrieving or clearing mnemonic. Please try again.' };
   }
 }
 
