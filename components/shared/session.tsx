@@ -2,8 +2,8 @@
 
 import React, { ReactNode, useState, useEffect } from "react";
 
-import { SessionData } from "@/lib/iron-session/session";
-import { getSession2 } from "@/lib/actions/server-hooks/getsession.action";
+import { SessionData } from "@/server/iron-session/session";
+import { getSession2 } from "@/server/actions/server-hooks/getsession.action";
 
 export function useSession() {
   const [session, setSession] = useState<SessionData | null>(null);

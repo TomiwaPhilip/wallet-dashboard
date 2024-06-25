@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchWalletBalance } from '@/lib/actions/transactions/balance.action';
+import { fetchWalletBalance } from '@/server/actions/transactions/balance.action';
 
 export async function GET(req: NextRequest) {
   try {

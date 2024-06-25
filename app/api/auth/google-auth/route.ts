@@ -3,13 +3,13 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   getGoogleAccessToken,
   getGoogleUserInfo,
-} from "@/lib/actions/server-hooks/google-auth.action";
-import connectToDB from "@/lib/model/database";
-import User from "@/lib/schemas/user";
-import { saveSession } from "@/lib/utils";
-import { generateMemoTag } from "@/lib/helpers/utils";
-import Memo from "@/lib/schemas/memo";
-import Wallet from "@/lib/schemas/wallet";
+} from "@/server/actions/server-hooks/google-auth.action";
+import connectToDB from "@/server/model/database";
+import User from "@/server/schemas/user";
+import { saveSession } from "@/server/utils";
+import { generateMemoTag } from "@/server/helpers/utils";
+import Memo from "@/server/schemas/memo";
+import Wallet from "@/server/schemas/wallet";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   if (!req.nextUrl) {

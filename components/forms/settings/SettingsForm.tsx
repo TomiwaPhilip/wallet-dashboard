@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { OutlineButtonSm } from "@/components/shared/buttons";
-import { SaveSettings } from "@/lib/actions/auth/settings.action";
+import { SaveSettings } from "@/server/actions/auth/settings.action";
 import { StatusMessage } from "@/components/shared/shared";
 
 interface FormData {

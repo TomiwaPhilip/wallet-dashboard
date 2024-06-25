@@ -2,7 +2,7 @@
 
 import React from "react";
 import { RiLoader4Line } from "react-icons/ri";
-import { handleGoogleLogin } from "@/lib/actions/auth/login.action";
+import { handleGoogleLogin } from "@/server/actions/auth/login.action";
 import Image from "next/image";
 
 const GoogleButton: React.FC = () => {

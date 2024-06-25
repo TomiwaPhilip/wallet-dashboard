@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, ChangeEvent } from "react";
 import { upload } from "@vercel/blob/client";
-import { SaveImage } from "@/lib/actions/auth/settings.action";
+import { SaveImage } from "@/server/actions/auth/settings.action";
 
 const ProfilePictureForm = ({ defaultImage }: { defaultImage: any }) => {
   const [image, setImage] = useState(defaultImage);

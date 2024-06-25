@@ -1,8 +1,8 @@
 "use server";
 
-import connectToDB from "@/lib/model/database";
+import connectToDB from "@/server/model/database";
 import getSession from "../server-hooks/getsession.action";
-import Wallet from "@/lib/schemas/wallet";
+import Wallet from "@/server/schemas/wallet";
 
 export async function fetchWalletBalance() {
   try {

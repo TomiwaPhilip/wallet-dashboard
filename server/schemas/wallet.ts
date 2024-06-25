@@ -11,6 +11,22 @@ const WalletSchema = new Schema({
         default: 0,
         required: true
     },
+    solanaPublicKey: {
+        type: String,
+        required: true,
+    },
+    usdcAddress: {
+        type: String,
+        required: true,
+    },
+    secretKey: {
+        type: String,
+        required: true,
+    },
+    deletedKeyPart: {
+        type: String,
+        default: null,
+    },
     currency: {
         type: String,
         required: true,

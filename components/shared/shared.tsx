@@ -4,7 +4,7 @@ import React, { ReactNode, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "@/lib/actions/auth/login.action";
+import { signOut } from "@/server/actions/auth/login.action";
 import { useSession } from "./session";
 
 export function Nav() {

@@ -1,8 +1,8 @@
 "use server";
 
-import connectToDB from "@/lib/model/database";
+import connectToDB from "@/server/model/database";
 import getSession from "../server-hooks/getsession.action";
-import Transaction, { TransactionType } from "@/lib/schemas/transaction";
+import Transaction, { TransactionType } from "@/server/schemas/transaction";
 
 // Define the return type for better type checking
 interface TransactionDetails {

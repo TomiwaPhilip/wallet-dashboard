@@ -4,8 +4,9 @@ import { useState } from "react";
 
 import { RiLoader4Line } from "react-icons/ri";
 import { useSearchParams } from "next/navigation";
-import { verifyUserToken } from "@/lib/actions/auth/login.action";
+import { verifyUserTokenAndLogin } from "@/server/actions/auth/login.action";
 import { NoOutlineButtonBig } from "@/components/shared/buttons";
+import { trusted } from "mongoose";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
@@ -19,13 +20,19 @@ export default function VerifyPage() {
   const handleVerify = async () => {
     try {
       setLoading(true); // Set loading to true before verification
-      const result = await verifyUserToken(token);
-      if (result) {
+      const result = await verifyUserTokenAndLogin(token);
+      if (result.newUser) {
         setVerifyResult("You're verified");
-        // Redirect to home page if verified
-        window.location.href = "/";
-      } else {
-        setVerifyResult("Invalid verification credentials");
+
+        if (result.newUser == true) {
+          // Redirect to copy secret page
+          window.location.href = "/";
+        } else {
+          // Redirect to home page if verified
+          window.location.href = "/";
+        }
+      } else if(result.error) {
+        setVerifyResult(result.error);
         // Redirect to sign-in page if not verified
         window.location.href = "/auth/signin";
       }

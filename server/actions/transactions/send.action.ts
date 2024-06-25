@@ -1,11 +1,11 @@
 "use server";
 
-import connectToDB from "@/lib/model/database";
+import connectToDB from "@/server/model/database";
 import getSession from "../server-hooks/getsession.action";
-import Wallet from "@/lib/schemas/wallet";
-import User from "@/lib/schemas/user";
-import TransactionSignature from "@/lib/schemas/transactionSignature";
-import Transaction, { TransactionType } from "@/lib/schemas/transaction"; // Adjust import as per your schema file\
+import Wallet from "@/server/schemas/wallet";
+import User from "@/server/schemas/user";
+import TransactionSignature from "@/server/schemas/transactionSignature";
+import Transaction, { TransactionType } from "@/server/schemas/transaction"; // Adjust import as per your schema file\
 import {
     Connection,
     Keypair,
@@ -18,6 +18,7 @@ import {
 } from '@solana/spl-token';
 
 import { hexToBytes } from "./utils";
+import { getPlatformWallet } from "../server-hooks/platformWallet.action";
 
 interface SendFundsToMilestonUserParams {
     receiverEmail: string;
@@ -105,16 +106,7 @@ export async function sendFundsToExternalWallet(params: SendFundsToExternalWalle
         const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
         const usdcMintAddress = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'); // USDC Mint Address (Dev Net)
         
-        let ownerStuff;
-
-        if (!process.env.publicKey || !process.env.secretKey) {
-            return {error: "Invalid Keys"};
-        } else {
-            ownerStuff = {
-                publicKey: process.env.publicKey,
-                secretKey: process.env.secretKey,
-            };
-        };
+        const ownerStuff = getPlatformWallet();
 
         const ownerSecretBytes = hexToBytes(ownerStuff.secretKey);
         const owner = Keypair.fromSecretKey(ownerSecretBytes);

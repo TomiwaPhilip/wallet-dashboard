@@ -4,7 +4,7 @@ import {
   sessionOptions,
   SessionData,
   defaultSession,
-} from "@/lib/iron-session/session";
+} from "@/server/iron-session/session";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 

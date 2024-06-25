@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { useSession } from "@/components/shared/session";
 import { TransactionMessage } from "@/components/shared/shared";
-import { sendFundsToExternalWallet } from "@/lib/actions/transactions/send.action";
+import { sendFundsToExternalWallet } from "@/server/actions/transactions/send.action";
 
 interface FormData {
   usdcNetwork: string;

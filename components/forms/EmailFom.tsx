@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "@/lib/actions/auth/login.action";
+import { signIn } from "@/server/actions/auth/login.action";
 import React, { useState } from "react";
 
 import { StatusMessage } from "../shared/shared";

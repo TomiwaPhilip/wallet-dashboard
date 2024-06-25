@@ -10,11 +10,12 @@ import {
 import connectToDB from "../../model/database";
 import User from "../../schemas/user";
 import getSession from "../server-hooks/getsession.action";
-import { getGoogleAuthUrl } from "@/lib/actions/server-hooks/google-auth.action";
+import { getGoogleAuthUrl } from "@/server/actions/server-hooks/google-auth.action";
 import { redirect } from "next/navigation";
 import Memo from "../../schemas/memo";
 import { generateMemoTag } from "../../helpers/utils";
 import Wallet from "../../schemas/wallet";
+import { createWallet } from "../wallet/wallet.action";
 
 export async function signIn(email: string) {
   console.log("I want to send emails");
@@ -50,7 +51,7 @@ export async function signIn(email: string) {
   }
 }
 
-export async function verifyUserToken(token: string): Promise<boolean> {
+export async function verifyUserTokenAndLogin(token: string) {
   try {
     connectToDB();
 
@@ -58,7 +59,7 @@ export async function verifyUserToken(token: string): Promise<boolean> {
 
     if (!existingToken) {
       console.log("Token not found in DB");
-      return false; // Token not found in the database
+      return {error: "Invalid Credentials!"}; // Token not found in the database
     }
 
     // Check if the token has expired
@@ -71,7 +72,7 @@ export async function verifyUserToken(token: string): Promise<boolean> {
       console.log("Token has expired");
       // If the token has expired, delete the token document from the database
       await VerificationToken.findOneAndDelete({ token: token });
-      return false; // Token has expired
+      return {error: "Invalid token"};; // Token has expired
     }
 
     const email = existingToken.email;
@@ -82,10 +83,10 @@ export async function verifyUserToken(token: string): Promise<boolean> {
 
       if (existingUser) {
 
-        const existingMemo = await Memo.findOne({ user: existingUser._id });
+        // const existingMemo = await Memo.findOne({ user: existingUser._id });
 
         const existingWallet = await Wallet.findOne({ user: existingUser._id });
-        
+
         // Create session data
         let sessionData = {
           userId: existingUser._id.toString(),
@@ -94,7 +95,7 @@ export async function verifyUserToken(token: string): Promise<boolean> {
           lastName: existingUser.lastname,
           image: existingUser.image, // Initialize image as an empty string
           walletBalance: existingWallet.balance,
-          memo: existingMemo.memo,
+          walletAddress: existingWallet.usdcAddress,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
           isLoggedIn: true,
@@ -107,7 +108,7 @@ export async function verifyUserToken(token: string): Promise<boolean> {
         await VerificationToken.findOneAndDelete({ token: token });
 
         // Redirect to the dashboard or appropriate page
-        return true;
+        return {newUser: false};
       } else {
         // User does not exist, create a new organization and role with the received email
 
@@ -117,23 +118,21 @@ export async function verifyUserToken(token: string): Promise<boolean> {
           loginType: "email", // or the appropriate login type
         });
 
-        const memo = generateMemoTag();
+        // const memo = generateMemoTag();
 
-        const newMemo = await Memo.create({
-          memo: memo,
-          user: newUser._id,
-        });
+        // const newMemo = await Memo.create({
+        //   memo: memo,
+        //   user: newUser._id,
+        // });
 
-        const newWallet = await Wallet.create({
-          user: newUser._id,
-        });
+        const newWallet = await createWallet(newUser._id)
 
         // Create session data
         const sessionData = {
           userId: newUser._id.toString(),
           email: newUser.email,
           walletBalance: newWallet.balance,
-          memo: newMemo.memo,
+          walletAddress: newWallet.publicKey,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
           isLoggedIn: true,
@@ -146,15 +145,15 @@ export async function verifyUserToken(token: string): Promise<boolean> {
         await VerificationToken.findOneAndDelete({ token: token });
 
         // Redirect to the dashboard or appropriate page
-        return true;
+        return {newUser: true};
       }
     } catch (error: any) {
       console.error("Error logging user in", error.message);
-      return false;
+      return {error: "Error logging in. Try again later!"};
     }
   } catch (error: any) {
     console.error("Error verifying token:", error.message);
-    return false;
+    return {error: "Error verifying token. Try again later!"};
   }
 }
 
