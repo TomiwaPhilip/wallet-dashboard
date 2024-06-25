@@ -121,7 +121,6 @@ export async function createWallet(userObject: any) {
             return {
                 balance: newWallet.balance,
                 publicKey: usdcAccount.usdcAccount,
-                secretKey: mnemonic.firstPart
             };
         } else {
             return { error: "Error creating usdc account" }
