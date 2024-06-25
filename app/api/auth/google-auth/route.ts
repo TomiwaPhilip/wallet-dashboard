@@ -10,6 +10,7 @@ import { saveSession } from "@/server/utils";
 import { generateMemoTag } from "@/server/helpers/utils";
 import Memo from "@/server/schemas/memo";
 import Wallet from "@/server/schemas/wallet";
+import { createWallet } from "@/server/actions/wallet/wallet.action";
 
 export async function GET(req: NextRequest, res: NextResponse) {
   if (!req.nextUrl) {
@@ -56,6 +57,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           image: existingUser.image, // Initialize image as an empty string
           memo: existingMemo.memo,
           walletBalance: existingWallet.balance,
+          walletAddress: existingWallet.usdcAddress,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
           isLoggedIn: true,
@@ -112,9 +114,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           user: newUser._id,
         });
 
-        const newWallet = await Wallet.create({
-          user: newUser._id,
-        });
+        const newWallet = await createWallet(newUser._id);
 
         // Create session data
         const sessionData = {
@@ -125,6 +125,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           image: newUser.image,
           memo: newMemo.memo,
           walletBalance: newWallet.balance,
+          walletAddress: newWallet.publicKey,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
           isLoggedIn: true,

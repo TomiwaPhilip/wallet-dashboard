@@ -111,7 +111,7 @@ export async function verifyUserTokenAndLogin(token: string) {
         return { newUser: false };
       } else {
         // User does not exist, create a new organization and role with the received email
-
+        console.log("I got to create new user")
         // Create a new User for the user with the received email
         const newUser = await User.create({
           email: email,
@@ -124,8 +124,12 @@ export async function verifyUserTokenAndLogin(token: string) {
         //   memo: memo,
         //   user: newUser._id,
         // });
-
+        console.log("I got to createing new wallet")
         const newWallet = await createWallet(newUser._id)
+
+        if(newWallet.error) {
+          return {error: "error creating wallet for user"}
+        }
 
         // Create session data
         const sessionData = {
@@ -165,7 +169,11 @@ export async function getMnemonic() {
 
   try {
       // Fetch only the deletedKeyPart field for the user
-      const wallet = await Wallet.findOne({ _id: userId }, { deletedKeyPart: 1 });
+      const wallet = await Wallet.findOne({ user: userId }, { deletedKeyPart: 1 });
+
+      console.log(userId)
+
+      console.log(wallet)
 
       if (!wallet) {
           return {error: "Wallet not found"};
@@ -175,7 +183,7 @@ export async function getMnemonic() {
       const secretKey = wallet.deletedKeyPart;
 
       // Clear the secret key from the database
-      await Wallet.updateOne({ _id: userId }, { $unset: { deletedKeyPart: '' } });
+      await Wallet.updateOne({ user: userId }, { $unset: { deletedKeyPart: '' } });
 
       return { secretKey: secretKey };
   } catch (error) {

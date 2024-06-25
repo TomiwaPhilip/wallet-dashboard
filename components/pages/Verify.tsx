@@ -26,7 +26,7 @@ export default function VerifyPage() {
 
         if (result.newUser == true) {
           // Redirect to copy secret page
-          window.location.href = "/";
+          window.location.href = "/auth/secret";
         } else {
           // Redirect to home page if verified
           window.location.href = "/";

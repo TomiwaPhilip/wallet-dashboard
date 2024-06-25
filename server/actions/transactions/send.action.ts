@@ -106,7 +106,7 @@ export async function sendFundsToExternalWallet(params: SendFundsToExternalWalle
         const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
         const usdcMintAddress = new PublicKey('4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU'); // USDC Mint Address (Dev Net)
         
-        const ownerStuff = getPlatformWallet();
+        const ownerStuff = await getPlatformWallet();
 
         const ownerSecretBytes = hexToBytes(ownerStuff.secretKey);
         const owner = Keypair.fromSecretKey(ownerSecretBytes);

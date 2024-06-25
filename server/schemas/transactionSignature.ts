@@ -1,4 +1,4 @@
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, models, Document, Types } from "mongoose";
 
 // Define enum for transaction type
 const TransactionType = Object.freeze({
@@ -36,6 +36,7 @@ const TransactionSignatureSchema = new Schema<ITransactionSignature>({
     }
 });
 
-const TransactionSignature = model<ITransactionSignature>("TransactionSignature", TransactionSignatureSchema);
+// Check if the model already exists before defining it
+const TransactionSignature = models.TransactionSignature || model<ITransactionSignature>("TransactionSignature", TransactionSignatureSchema);
 
 export default TransactionSignature;

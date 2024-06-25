@@ -20,7 +20,7 @@ export default function TransactionHistory({ renderAll = true, specificIndex = 0
     return <div>Error loading transactions.</div>;
   }
 
-  if (data === false) {
+  if (data.history === false) {
     return <div>You have not performed any transactions yet.</div>;
   }
 
