@@ -165,7 +165,7 @@ const ExternalSend: React.FC = () => {
             </div>
 
             <p className="text-[#979EB8] text-[16px] mb-10">
-              Available Balance: ${session?.walletBalance?.toFixed(2)} USDC
+              Available Balance: ${session?.walletBalance} USDC
             </p>
 
             <div className="flex items-center justify-center">

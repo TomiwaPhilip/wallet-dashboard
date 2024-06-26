@@ -130,7 +130,7 @@ const MilestonSend: React.FC = () => {
             </div>
 
             <p className="text-[#979EB8] text-[16px] mb-10">
-              Available Balance: ${session?.walletBalance?.toFixed(2)} USDT
+              Available Balance: ${session?.walletBalance} USDT
             </p>
 
             <div className="flex items-center justify-center">

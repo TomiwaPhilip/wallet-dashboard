@@ -7,8 +7,8 @@ const WalletSchema = new Schema({
         required: true
     },
     balance: {
-        type: Number,
-        default: 0,
+        type: String, // Change to String to accommodate bigint
+        default: '0',
         required: true
     },
     solanaPublicKey: {
