@@ -25,6 +25,8 @@ export async function signIn(email: string) {
     // Generate token and URL for verification
     const { token, generatedAt, expiresIn } = generateToken();
 
+    console.log(token)
+
     const url = `https://public-mileston.vercel.app/auth/verify?token=${token}`;
 
     // Send email with resend.dev
@@ -96,6 +98,7 @@ export async function verifyUserTokenAndLogin(token: string) {
           image: existingUser.image, // Initialize image as an empty string
           walletBalance: existingWallet.balance,
           walletAddress: existingWallet.usdcAddress,
+          solanaAddress: existingWallet.solanaPublicKey,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
           isLoggedIn: true,
@@ -137,6 +140,7 @@ export async function verifyUserTokenAndLogin(token: string) {
           email: newUser.email,
           walletBalance: newWallet.balance,
           walletAddress: newWallet.publicKey,
+          solanaAddress: newWallet.solanaAddress,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
           isLoggedIn: true,

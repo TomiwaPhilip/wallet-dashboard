@@ -121,9 +121,12 @@ export async function createWallet(userObject: any) {
                 usdcAddress: usdcAccount.usdcAccount,
             })
 
+            if(newWallet) console.log(newWallet);
+
             return {
                 balance: newWallet.balance,
                 publicKey: usdcAccount.usdcAccount,
+                solanaAddress: publicKey,
             };
         } else {
             return { error: "Error creating usdc account" }

@@ -39,6 +39,7 @@ export async function saveSession(session: SessionData): Promise<void> {
   existingSession.image = session.image;
   existingSession.walletBalance = session.walletBalance;
   existingSession.walletAddress = session.walletAddress;
+  existingSession.solanaAddress = session.solanaAddress;
   existingSession.isOnboarded = session.isOnboarded;
   existingSession.isVerified = session.isVerified;
   existingSession.isLoggedIn = session.isLoggedIn;

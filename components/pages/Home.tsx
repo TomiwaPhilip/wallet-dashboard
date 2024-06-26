@@ -92,7 +92,7 @@ export default function HomePage() {
                     <RiLoader4Line className="animate-spin text-2xl mb-10" />
                   ) : (
                     <p className="mt-[4rem] font-bold text-[40px] mb-10">
-                      ${data.balance.toFixed(2)} {/* Render balance when data is available */}
+                      ${data.balance?.toFixed(2)} {/* Render balance when data is available */}
                     </p>
                   )}
                   {!isLoading && (

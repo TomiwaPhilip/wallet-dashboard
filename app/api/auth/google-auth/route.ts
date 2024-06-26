@@ -58,6 +58,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           memo: existingMemo.memo,
           walletBalance: existingWallet.balance,
           walletAddress: existingWallet.usdcAddress,
+          solanaAddress: existingWallet.solanaPublicKey,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
           isLoggedIn: true,
@@ -107,12 +108,12 @@ export async function GET(req: NextRequest, res: NextResponse) {
           loginType: "google", // or the appropriate login type
         });
 
-        const memo = generateMemoTag();
+        // const memo = generateMemoTag();
 
-        const newMemo = await Memo.create({
-          memo: memo,
-          user: newUser._id,
-        });
+        // const newMemo = await Memo.create({
+        //   memo: memo,
+        //   user: newUser._id,
+        // });
 
         const newWallet = await createWallet(newUser._id);
 
@@ -123,9 +124,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           image: newUser.image,
-          memo: newMemo.memo,
           walletBalance: newWallet.balance,
           walletAddress: newWallet.publicKey,
+          solanaAddress: newWallet.solanaAddress,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
           isLoggedIn: true,

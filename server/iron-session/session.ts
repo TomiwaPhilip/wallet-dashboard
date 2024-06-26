@@ -7,6 +7,7 @@ export interface SessionData {
   lastName?: string;
   image?: string;
   walletAddress?: string;
+  solanaAddress?: string;
   walletBalance?: number;
   isOnboarded?: boolean;
   isVerified?: boolean;
