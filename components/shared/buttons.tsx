@@ -137,7 +137,7 @@ export function NoOutlineButtonIcon({
       {loading ? (
         <RiLoader4Line className="animate-spin text-2xl" />
       ) : (
-        <span>{name}</span>
+        <p className="transaction-text">{name}</p>
       )}
     </button>
   );

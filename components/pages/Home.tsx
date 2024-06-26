@@ -13,6 +13,7 @@ import MilestonSend from "../forms/transactions/MilestonSend";
 import ExternalSend from "../forms/transactions/ExternalSend";
 import { RiLoader4Line } from "react-icons/ri";
 import TransactionHistory from "../shared/TransactionHistory";
+import Receive from "../forms/transactions/Receive";
 
 export default function HomePage() {
 
@@ -34,6 +35,7 @@ export default function HomePage() {
 
   const [isModalOpen, setIsModalOpen] = useState<boolean | null>(false);
   const [isModalOpen2, setIsModalOpen2] = useState<boolean | null>(false);
+  const [isModalOpen3, setIsModalOpen3] = useState<boolean | null>(false);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -43,15 +45,30 @@ export default function HomePage() {
   const handleCloseModal = () => {
     setIsModalOpen(null);
     setIsModalOpen2(null);
+    setIsModalOpen3(null);
   };
 
   const handleOpenModal2 = () => {
     setIsModalOpen2(true);
     setIsModalOpen(null);
+    setIsModalOpen3(null);
   };
 
   const handleCloseModal2 = () => {
     setIsModalOpen(null);
+    setIsModalOpen2(null);
+    setIsModalOpen3(null);
+  };
+
+  const handleOpenModal3 = () => {
+    setIsModalOpen3(true);
+    setIsModalOpen(null);
+    setIsModalOpen2(null);
+  };
+
+  const handleCloseModal3 = () => {
+    setIsModalOpen(null);
+    setIsModalOpen3(null);
     setIsModalOpen2(null);
   };
 
@@ -84,21 +101,28 @@ export default function HomePage() {
                 </>
               ) : (
                 <div className="flex-col items-center justify-center gap-10">
-                  <h3 className="font-medium text-[20px] mb-[4rem]">
+                  <h3 className="font-medium text-[20px] mb-[2rem]">
                     Transaction Method
                   </h3>
+                  <NoOutlineButtonIcon
+                    name="Receive to Mileston Wallet"
+                    type="button"
+                    iconSrc="/assets/icons/arrow_circle_right.svg"
+                    buttonClassName="w-full my-3"
+                    onClick={handleOpenModal3}
+                  />
                   <NoOutlineButtonIcon
                     name="Send to Mileston User"
                     type="button"
                     iconSrc="/assets/icons/arrow_circle_right.svg"
-                    buttonClassName="w-full my-10"
+                    buttonClassName="w-full my-3"
                     onClick={handleOpenModal}
                   />
                   <NoOutlineButtonIcon
                     name="Send to External Wallet"
                     type="button"
                     iconSrc="/assets/icons/arrow_circle_left.svg"
-                    buttonClassName="w-full my-10"
+                    buttonClassName="w-full my-3"
                     onClick={handleOpenModal2}
                   />
                 </div>
@@ -115,6 +139,9 @@ export default function HomePage() {
           </Card2>
         </div>
       </div>
+      <Modal isOpen={isModalOpen3} onClose={handleCloseModal}>
+        <Receive />
+      </Modal>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <MilestonSend />
       </Modal>

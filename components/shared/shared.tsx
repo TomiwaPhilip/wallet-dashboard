@@ -280,8 +280,8 @@ export function TransactionMessage(props: TransactionMessageProps) {
   const { message, type } = props;
 
   const imageUrl = type
-    ? '/assets/icons/bubble.svg'  // URL for success image
-    : '/assets/icons/problem.svg';   // URL for error image
+    ? '/assets/icons/bubble_(1).svg'  // URL for success image
+    : '/assets/icons/problem_(1).svg';   // URL for error image
 
   return (
     <div className="flex flex-col items-center justify-center text-center">
