@@ -42,7 +42,7 @@ const Receive: React.FC = () => {
                 <p className="text-center text-[16px] font-bold my-2">Scan QR Code to Copy Wallet Address</p>
             </div>
             <p ref={secretRef} className="hidden">{walletAddress}</p>
-            <div className="flex items-center justify-center mt-3">
+            <div className="flex items-center justify-center mt-6">
                 <NoOutlineButtonIcon
                     name={walletAddress}
                     type="submit"

@@ -114,7 +114,7 @@ export default function HomePage() {
                   <NoOutlineButtonIcon
                     name="Send to Mileston User"
                     type="button"
-                    iconSrc="/assets/icons/arrow_circle_right.svg"
+                    iconSrc="/assets/icons/arrow_circle_left.svg"
                     buttonClassName="w-full my-3"
                     onClick={handleOpenModal}
                   />

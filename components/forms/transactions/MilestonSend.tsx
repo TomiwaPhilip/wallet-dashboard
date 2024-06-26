@@ -100,7 +100,7 @@ const MilestonSend: React.FC = () => {
           </p>
           <form onSubmit={handleSubmit} className="w-full mx-auto">
             <div className="mb-4">
-              <label className="block text-sm font-medium">Email Address</label>
+              <label className="block text-sm font-medium">Mileston Wallet/Email Address or Phone Number</label>
               <input
                 type="email"
                 name="email"
