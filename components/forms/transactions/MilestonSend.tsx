@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { useSession } from "@/components/shared/session";
-import { sendFundsToMilestonUser, sendFundsToWallet } from "@/server/actions/transactions/send.action";
+import { sendFundsToWallet } from "@/server/actions/transactions/send.action";
 import { TransactionMessage } from "@/components/shared/shared";
 
 interface FormData {

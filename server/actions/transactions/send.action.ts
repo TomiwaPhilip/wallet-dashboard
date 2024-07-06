@@ -19,10 +19,14 @@ import {
 
 import { fetchBalanceFromChain, hexToBytes } from "./utils";
 import { mnemonicToKeypairForRetrieval, getPlatformWallet } from "../server-hooks/platformWallet.action";
+import { sendBalanceChangedNotification } from "@/server/utils";
 
-interface SendFundsToMilestonUserParams {
-  receiverEmail: string;
-  amount: string;
+function isFloat(n: any) {
+  return Number(n) === n && n % 1 !== 0;
+}
+
+function isInteger(n: any) {
+  return Number.isInteger(n);
 }
 
 // Connect to Solana devnet
@@ -60,14 +64,14 @@ export async function sendFundsToWallet(params: SendFundsToWalletParams) {
       if (!user) throw new Error("User not found");
       const recipientWallet = await Wallet.findOne({ user: user._id });
       if (!recipientWallet) throw new Error("Recipient's wallet not found");
-      recipientWalletAddress = recipientWallet.usdcAddress;
+      recipientWalletAddress = recipientWallet.solanaPublicKey;
     } else if (phoneRegex.test(identifier)) {
       if (!senderSession.isOnboarded) return { error: "Unable to send funds with phone number. Complete onboarding in settings." }
       const user = await User.findOne({ phoneNumber: identifier });
       if (!user) throw new Error("User not found");
       const recipientWallet = await Wallet.findOne({ user: user._id });
       if (!recipientWallet) throw new Error("Recipient's wallet not found");
-      recipientWalletAddress = recipientWallet.usdcAddress;
+      recipientWalletAddress = recipientWallet.solanaPublicKey;
     } else if (walletRegex.test(identifier)) {
       recipientWalletAddress = identifier;
     } else {
@@ -90,9 +94,18 @@ export async function sendFundsToWallet(params: SendFundsToWalletParams) {
     if (!balance) {
       return { error: "Unable to fetch balance" };
     }
+    let amountToSend;
+    const checkAmount = Number(amount)
+    if(isFloat(checkAmount)) {
+      console.log("Number is float")
+      amountToSend = BigInt(checkAmount * 10 ** 6)
+    } else if (isInteger(checkAmount)) {
+      console.log("Number is integer")
+      amountToSend = BigInt(amount) * BigInt(10 ** 6);
+    } else {
+      return {error: "Invalid amount input!"}
+    }
 
-    // Check if sender has enough balance
-    const amountToSend = BigInt(amount) * BigInt(10 ** 6);
     console.log(amountToSend, "amount to send in bigint");
     console.log(Number(amountToSend), "amount to send in number")
     const transactionFee = BigInt(0.1 * 10 ** 6);
@@ -170,75 +183,7 @@ export async function sendFundsToWallet(params: SendFundsToWalletParams) {
     await newTransaction.save();
 
     // Send success email
-
-    // Return success message
-    return { message: "Transaction completed successfully!" };
-  } catch (error) {
-    console.error("Error transferring funds:", error);
-    return { error: "Unable to transfer. Please try again later." };
-  }
-}
-
-
-export async function sendFundsToMilestonUser(params: SendFundsToMilestonUserParams) {
-  try {
-    // Ensure the database connection is established
-    await connectToDB();
-
-    // Get the current user session (sender)
-    const senderSession = await getSession();
-    if (!senderSession || !senderSession.userId) {
-      return { error: "Sender is not authenticated" };
-    }
-
-    // Fetch sender's wallet
-    const senderWallet = await Wallet.findOne({ user: senderSession.userId });
-    if (!senderWallet) {
-      return { error: "Sender's wallet not found" };
-    }
-
-    // Validate sender has enough balance
-    const amountToSend = parseFloat(params.amount);
-    if (senderWallet.balance < amountToSend) {
-      return { error: "Insufficient balance to send funds" };
-    }
-
-    // Get receiver user details
-    const receiverUser = await User.findOne({ email: params.receiverEmail });
-    if (!receiverUser) {
-      return { error: "Receiver user not found" };
-    }
-
-    // Fetch receiver's wallet
-    const receiverWallet = await Wallet.findOne({ user: receiverUser._id });
-    if (!receiverWallet) {
-      return { error: "Receiver's wallet not found" };
-    }
-
-    // Update sender's wallet balance (subtract amount)
-    senderWallet.balance -= amountToSend;
-    await senderWallet.save();
-
-    // Update receiver's wallet balance (add amount)
-    receiverWallet.balance += amountToSend;
-    await receiverWallet.save();
-
-    // Log transaction details
-    console.log(`Funds transferred from ${senderSession.email} to ${params.receiverEmail}: ${amountToSend}`);
-
-    // Create transaction document
-    const newTransaction = new Transaction({
-      type: TransactionType.SENT,
-      sender: senderSession.userId,
-      receiver: receiverUser._id,
-      amount: amountToSend,
-      currency: 'USDC', // Assuming default currency
-      timestamp: new Date()
-    });
-
-    // Save transaction to database
-    await newTransaction.save();
-
+    const data = await sendBalanceChangedNotification(amount, senderSession.email as string, "been debited");
     // Return success message
     return { message: "Transaction completed successfully!" };
   } catch (error) {
