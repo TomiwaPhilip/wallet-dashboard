@@ -27,7 +27,7 @@ export async function signIn(email: string) {
 
     console.log(token)
 
-    const url = `https://special-orbit-5gq94wwpj7pfvwg4-3000.app.github.dev/auth/verify?token=${token}`;
+    const url = `https://personal-mileston.vercel.app/auth/verify?token=${token}`;
 
     // Send email with resend.dev
     await sendVerificationRequest({ url: url, email: email });
