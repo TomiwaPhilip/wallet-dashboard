@@ -27,6 +27,22 @@ export const sendVerificationRequest = async (
   }
 };
 
+export const sendBalanceChangedNotification = async (amount: string, email: string, state: string) => {
+  try {
+    console.log("sending email to user!")
+    const resend = new Resend(process.env.RESEND_KEY!);
+    await resend.emails.send({
+      from: "no-reply@mileston.co",
+      to: email,
+      subject: "Wallet Ballance Changed!",
+      html:
+        `<p>Hello. You have ${state} ${amount} USDC in your account</p>`
+    });
+  } catch (error) {
+    console.log({ error });
+  }
+};
+
 export async function saveSession(session: SessionData): Promise<void> {
   // Check if session exists
   let existingSession = await getSession();

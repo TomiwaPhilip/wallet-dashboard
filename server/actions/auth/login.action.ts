@@ -27,7 +27,7 @@ export async function signIn(email: string) {
 
     console.log(token)
 
-    const url = `https://public-mileston.vercel.app/auth/verify?token=${token}`;
+    const url = `https://special-orbit-5gq94wwpj7pfvwg4-3000.app.github.dev/auth/verify?token=${token}`;
 
     // Send email with resend.dev
     await sendVerificationRequest({ url: url, email: email });
@@ -131,7 +131,7 @@ export async function verifyUserTokenAndLogin(token: string) {
         const newWallet = await createWallet(newUser._id)
 
         if(newWallet.error) {
-          return {error: "error creating wallet for user"}
+          return {error: "Error creating wallet for user"}
         }
 
         // Create session data

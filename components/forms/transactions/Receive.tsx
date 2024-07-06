@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 const Receive: React.FC = () => {
 
     const session = useSession();
-    const walletAddress = session?.walletAddress || '';
+    const walletAddress = session?.solanaAddress || '';
 
     const [copy, setCopy] = useState('/assets/icons/content_copy.svg');
     const secretRef = useRef<HTMLParagraphElement>(null);

@@ -2,18 +2,20 @@ import React, { useState } from "react";
 
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { useSession } from "@/components/shared/session";
-import { sendFundsToMilestonUser } from "@/server/actions/transactions/send.action";
+import { sendFundsToMilestonUser, sendFundsToWallet } from "@/server/actions/transactions/send.action";
 import { TransactionMessage } from "@/components/shared/shared";
 
 interface FormData {
-  email: string;
+  identifier: string;
   amount: string;
+  secretPhrase: string;
 }
 
 const MilestonSend: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    email: "",
+    identifier: "",
     amount: "0",
+    secretPhrase: "",
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -26,19 +28,36 @@ const MilestonSend: React.FC = () => {
 
   const validate = (data: FormData) => {
     const newErrors: Partial<FormData> = {};
-
-    if (!data.email.trim()) {
-      newErrors.email = "Email address is required";
-    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      newErrors.email = "Invalid email address";
+  
+    // Validate email, phone number, or wallet address
+    if (!data.identifier.trim()) {
+      newErrors.identifier = "Email, phone number, or wallet address is required";
+    } else if (
+      !/\S+@\S+\.\S+/.test(data.identifier) && // Check for email format
+      !/^\+\d{1,3}\d{10}$/.test(data.identifier) && // Check for phone number format (10 digits)
+      !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(data.identifier) // Check for wallet address format (Ethereum-like)
+    ) {
+      newErrors.identifier = "Invalid email, phone number, or wallet address";
     }
-
+  
+    // Validate amount
     if (!data.amount) {
       newErrors.amount = "Amount must be greater than 0";
     }
-
+  
+    // Validate secretPhrase with 6 words
+    if (!data.secretPhrase.trim()) {
+      newErrors.secretPhrase = "Secret phrase is required";
+    } else {
+      const words = data.secretPhrase.trim().split(/\s+/);
+      if (words.length !== 6) {
+        newErrors.secretPhrase = "Secret phrase must contain exactly 6 words";
+      }
+    }
+  
     return newErrors;
   };
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -62,10 +81,12 @@ const MilestonSend: React.FC = () => {
       console.log("Form Data Submitted:", formData);
 
       try {
+        console.log(formData);
         // Call your submit function here
-        const response = await sendFundsToMilestonUser({
-          receiverEmail: formData.email,
-          amount: formData.amount
+        const response = await sendFundsToWallet({
+          identifier: formData.identifier,
+          amount: formData.amount,
+          secretPhrase: formData.secretPhrase,
         });
         if (response.error) {
           setMessage(response.error);
@@ -102,15 +123,15 @@ const MilestonSend: React.FC = () => {
             <div className="mb-4">
               <label className="block text-sm font-medium">Mileston Wallet/Email Address or Phone Number</label>
               <input
-                type="email"
-                name="email"
-                value={formData.email}
+                type="text"
+                name="identifier"
+                value={formData.identifier}
                 onChange={handleChange}
                 placeholder="example@mail.com"
-                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.email ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]`}
+                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.identifier ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]`}
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+              {errors.identifier && (
+                <p className="text-red-500 text-sm mt-1">{errors.identifier}</p>
               )}
             </div>
 
@@ -126,6 +147,21 @@ const MilestonSend: React.FC = () => {
               />
               {errors.amount && (
                 <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium">Secret Phrase</label>
+              <input
+                type="password"
+                name="secretPhrase"
+                value={formData.secretPhrase}
+                placeholder="*****"
+                onChange={handleChange}
+                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.secretPhrase ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]`}
+              />
+              {errors.secretPhrase && (
+                <p className="text-red-500 text-sm mt-1">{errors.secretPhrase}</p>
               )}
             </div>
 

@@ -10,7 +10,7 @@ import {
     Transaction,
     sendAndConfirmTransaction
 } from "@solana/web3.js";
-import { getPlatformWallet, keypairToMnemonic } from "../server-hooks/platformWallet.action";
+import { getPlatformWallet, mnemonicToKeypairForGeneration } from "../server-hooks/platformWallet.action";
 import { hexToBytes } from "../transactions/utils";
 import connectToDB from "@/server/model/database";
 import Wallet from "@/server/schemas/wallet";
@@ -80,17 +80,13 @@ export async function createUSDCAccount(receiverKey: string, sender: Keypair) {
 
 
 export async function createWallet(userObject: any) {
-
-    // Generate Keypair
-    const wallet = Keypair.generate();
+    console.log(userObject)
+    // Generate Wallet
+    const wallet = await mnemonicToKeypairForGeneration();
 
     console.log(wallet);
 
-    const mnemonic = await keypairToMnemonic(wallet)
-
-    console.log(mnemonic)
-
-    const publicKey = wallet.publicKey.toBase58();
+    const publicKey = wallet.publicKey;
 
     const signature = await transferSOLForRentFee(publicKey);
 
@@ -107,7 +103,7 @@ export async function createWallet(userObject: any) {
             signature: signature.signature,
         })
 
-        const usdcAccount = await createUSDCAccount(publicKey, wallet);
+        const usdcAccount = await createUSDCAccount(publicKey, wallet.keypair);
 
         console.log(usdcAccount);
 
@@ -116,8 +112,8 @@ export async function createWallet(userObject: any) {
             const newWallet = await Wallet.create({
                 user: userObject,
                 solanaPublicKey: publicKey,
-                secretKey: mnemonic.secondPart,
-                deletedKeyPart: mnemonic.firstPart,
+                secretKey: wallet.secondPart,
+                deletedKeyPart: wallet.firstPart,
                 usdcAddress: usdcAccount.usdcAccount,
             })
 
@@ -135,6 +131,3 @@ export async function createWallet(userObject: any) {
         return { error: "Error transferring rent fee for user" }
     };
 }
-
-
-

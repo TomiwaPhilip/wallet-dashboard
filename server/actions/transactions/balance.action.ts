@@ -6,6 +6,9 @@ import Wallet from "@/server/schemas/wallet";
 import { Connection, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { AccountLayout, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { formatBigIntToFixed } from "@/components/shared/formatBigInt";
+import { fetchBalanceFromChain, stringToBigInt } from "./utils";
+import { sendBalanceChangedNotification } from "@/server/utils";
+import Transaction, { TransactionType } from "@/server/schemas/transaction";
 
 const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
@@ -20,33 +23,15 @@ export async function fetchWalletBalance() {
     // Extract the userId from the session
     const userId = session?.userId;
     let owner;
-    if (!session || !session.solanaAddress) {
+    if (!session || !session.solanaAddress || !session.email) {
       throw new Error("User is not authenticated");
     } else { owner = session.solanaAddress }
 
-    const tokenAccounts = await connection.getTokenAccountsByOwner(
-      new PublicKey(owner),
-      {
-        programId: TOKEN_PROGRAM_ID,
-      }
-    );
+    const balance = await fetchBalanceFromChain(owner);
 
-    console.log("Token                                         Balance");
-    console.log("------------------------------------------------------------");
-
-    let balance: bigint | undefined;
-    tokenAccounts.value.forEach((tokenAccount) => {
-      const accountData = AccountLayout.decode(tokenAccount.account.data);
-      balance = accountData.amount as bigint;
-
-      console.log(`${new PublicKey(accountData.mint)}   ${accountData.amount}`);
-    });
-
-    if (!balance) {
+    if (balance === undefined) {
       throw new Error("Unable to fetch balance from the blockchain");
     }
-
-    // console.log(tokenAccounts);
 
     console.log(`Fetching balance for userId: ${userId}`);
 
@@ -59,10 +44,37 @@ export async function fetchWalletBalance() {
     // Log the wallet balance
     console.log(`User balance in DB: ${wallet.balance}`);
 
+    const dbBalance = stringToBigInt(wallet.balance)
+
     // Check if there is a change in balance
-    if (wallet.balance !== balance) {
+    if (dbBalance !== balance) {
       // Comment to send an email to the user about the change in balance
       console.log("Balance has changed. Sending email to the user about the added amount...");
+      if (balance > dbBalance) {
+        let amountChanged = balance - dbBalance;
+        const newAmount = formatBigIntToFixed(amountChanged, 2);
+
+        const data = await sendBalanceChangedNotification(newAmount, session.email, "received");
+
+        // Create transaction document
+        const newTransaction = new Transaction({
+          type: TransactionType.RECEIVED,
+          sender: "an external account",
+          receiver: userId,
+          amount: Number(newAmount),
+          currency: 'USDC', // Assuming default currency
+          timestamp: new Date()
+        });
+
+        // Save transaction to database
+        await newTransaction.save();
+
+      } else if (balance < dbBalance) {
+        let amountChanged = dbBalance - balance;
+        const newAmount = formatBigIntToFixed(amountChanged, 2);
+
+        const data = await sendBalanceChangedNotification(newAmount, session.email, "been deposited");
+      }
 
       // Update the balance in the database
       wallet.balance = balance;

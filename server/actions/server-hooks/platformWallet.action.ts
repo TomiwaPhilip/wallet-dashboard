@@ -2,7 +2,7 @@
 
 import { Keypair } from '@solana/web3.js';
 import { derivePath } from 'ed25519-hd-key';
-import { generateMnemonic, mnemonicToEntropy, mnemonicToSeedSync } from '@scure/bip39';
+import { generateMnemonic, mnemonicToEntropy, mnemonicToSeedSync, validateMnemonic } from '@scure/bip39';
 import { wordlist } from '@scure/bip39/wordlists/english';
 import { Buffer } from 'buffer';
 import bs58 from 'bs58';
@@ -23,43 +23,42 @@ export async function getPlatformWallet() {
     return ownerStuff;
 }
 
+export async function mnemonicToKeypairForGeneration() {
+    const mnemonic = generateMnemonic(wordlist, 128);
 
-// Function to convert a key pair to a 12-word mnemonic phrase and divide into two parts
-export async function keypairToMnemonic(keypair: Keypair) {
-    // Extract the first 32 bytes of the secret key
-    const secretKey = keypair.secretKey.slice(0, 32);
+    console.log(mnemonic);
 
-    // Generate a 12-word mnemonic phrase from the secret key entropy
-    const mnemonic = generateMnemonic(wordlist, 128); // 128 bits for 12 words
+    const seed = mnemonicToSeedSync(mnemonic, "");
+    const keypair = Keypair.fromSeed(seed.slice(0, 32));
+    
+    console.log(`${keypair.publicKey.toBase58()}`);
+    const publicKey = keypair.publicKey.toBase58();
 
-    // Split the mnemonic phrase into two parts
     const words = mnemonic.split(' ');
     const firstPart = words.slice(0, 6).join(' ');
     const secondPart = words.slice(6).join(' ');
+    console.log("firstPart:", " ", firstPart)
+    console.log("secondPart:", " ", secondPart)
+    console.log("publicKey:", " ", publicKey)
 
-    // Return an object with the divided parts
     return {
         firstPart,
-        secondPart
-    };
+        secondPart,
+        publicKey,
+        keypair,
+    }
 }
 
+export async function mnemonicToKeypairForRetrieval(firstPart: string, secondPart: string) {
+    const mnemonic = `${firstPart} ${secondPart}`
 
-// Function to convert concatenated mnemonic parts back to a secret key in hex format
-export async function concatenatedMnemonicToHex(firstPart: string, secondPart: string) {
-    // Concatenate the two parts with a space separator
-    const mnemonic = `${firstPart} ${secondPart}`;
+    const seed = mnemonicToSeedSync(mnemonic, "");
+    const keypair = Keypair.fromSeed(seed.slice(0, 32));
+    const pubkey = "Ddw7vp5uxiUVftZou1nnY244MHEBnv8s4E5xNpjfgLkA"
+    console.log(keypair.publicKey.toBase58(), "public key from the retrival")
+    console.log(pubkey)
+    console.log(pubkey === keypair.publicKey.toBase58())
+    console.log(Buffer.from(keypair.secretKey).toString('hex'), "secret key from the retrival")
 
-    // Convert the mnemonic phrase to a seed buffer
-    const seed = mnemonicToSeedSync(mnemonic);
-
-    // Derive the seed using the Solana-specific derivation path
-    const derivedSeed = derivePath("m/44'/501'/0'/0'", seed.toString()).key;
-
-    // Generate a key pair from the derived seed
-    const keypair = Keypair.fromSeed(derivedSeed);
-
-    // Convert the secret key to a hexadecimal string
-    const secretKeyHex = Buffer.from(keypair.secretKey).toString('hex');
-    return secretKeyHex;
+    return keypair;
 }
