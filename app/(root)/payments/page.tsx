@@ -1,5 +1,7 @@
+import Payment from "@/components/pages/Payment";
+
 export default function Page() {
     return(
-        <p> I am the payment page </p>
+        <Payment />
     )
 }

@@ -75,3 +75,49 @@ body {
   display: block; /* Ensure the element is a block to use truncation */
   max-width: 100%; /* Ensure it takes the full width of the container */
 }
+
+/* For Webkit Browsers (Chrome, Safari, etc.) */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+  height: 8px; /* Height of the scrollbar (for horizontal scrollbar) */
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1c22; /* Background of the scrollbar track */
+  border-radius: 8px; /* Rounded corners for the track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #44475a; /* Color of the scrollbar thumb */
+  border-radius: 8px; /* Rounded corners for the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6272a4; /* Color when hovering over the scrollbar thumb */
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin; /* Makes the scrollbar thin */
+  scrollbar-color: #44475a #1a1c22; /* thumb color track color */
+}
+
+html::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+html::-webkit-scrollbar-track {
+  background: #1a1c22;
+  border-radius: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #44475a;
+  border-radius: 8px;
+  border: 2px solid #1a1c22; /* Adds a little space around the thumb */
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: #6272a4;
+}

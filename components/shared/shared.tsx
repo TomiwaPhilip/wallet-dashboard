@@ -271,11 +271,6 @@ interface TransactionMessageProps {
   type: boolean;
 }
 
-interface TransactionMessageProps {
-  message: string;
-  type: boolean;
-}
-
 export function TransactionMessage(props: TransactionMessageProps) {
   const { message, type } = props;
 
@@ -292,6 +287,34 @@ export function TransactionMessage(props: TransactionMessageProps) {
         width={200}
       />
       <p className="font-bold text-[24px] p-5"> {message} </p>
+    </div>
+  );
+}
+
+interface InvoiceBarProps {
+  text: string;
+  type: 'invoice' | 'paymentLink';
+}
+
+export function InvoicesAndPaymentBar({ text, type }: InvoiceBarProps) {
+  const isPaymentLink = type === 'paymentLink';
+  const backgroundColor = isPaymentLink ? 'bg-[#2B3993]' : 'bg-[#464D67]';
+  const iconSrc = isPaymentLink
+    ? '/assets/icons/captive_portal.svg'
+    : '/assets/icons/book.svg';
+  const iconAlt = isPaymentLink
+    ? 'paymentLink_icon'
+    : 'invoice_icon';
+
+  return (
+    <div className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}>
+      <Image
+        src={iconSrc}
+        alt={iconAlt}
+        height={25}
+        width={25}
+      />
+      <p className="transaction-text">{text}</p>
     </div>
   );
 }
