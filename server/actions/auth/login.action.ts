@@ -25,9 +25,9 @@ export async function signIn(email: string) {
     // Generate token and URL for verification
     const { token, generatedAt, expiresIn } = generateToken();
 
-    console.log(token)
+    console.log(token);
 
-    const url = `https://personal-mileston.vercel.app/auth/verify?token=${token}`;
+    const url = `https://l4t55h-3000.csb.app/auth/verify?token=${token}`;
 
     // Send email with resend.dev
     await sendVerificationRequest({ url: url, email: email });
@@ -74,7 +74,7 @@ export async function verifyUserTokenAndLogin(token: string) {
       console.log("Token has expired");
       // If the token has expired, delete the token document from the database
       await VerificationToken.findOneAndDelete({ token: token });
-      return { error: "Invalid token" };; // Token has expired
+      return { error: "Invalid token" }; // Token has expired
     }
 
     const email = existingToken.email;
@@ -84,7 +84,6 @@ export async function verifyUserTokenAndLogin(token: string) {
       const existingUser = await User.findOne({ email: email });
 
       if (existingUser) {
-
         // const existingMemo = await Memo.findOne({ user: existingUser._id });
 
         const existingWallet = await Wallet.findOne({ user: existingUser._id });
@@ -93,9 +92,9 @@ export async function verifyUserTokenAndLogin(token: string) {
         let sessionData = {
           userId: existingUser._id.toString(),
           email: existingUser.email,
-          firstName: existingUser.firstname,
-          lastName: existingUser.lastname,
-          image: existingUser.image, // Initialize image as an empty string
+          firstName: existingUser?.firstname || "",
+          lastName: existingUser?.lastname || "",
+          image: existingUser?.image || "",
           walletBalance: existingWallet.balance,
           walletAddress: existingWallet.usdcAddress,
           solanaAddress: existingWallet.solanaPublicKey,
@@ -114,7 +113,7 @@ export async function verifyUserTokenAndLogin(token: string) {
         return { newUser: false };
       } else {
         // User does not exist, create a new organization and role with the received email
-        console.log("I got to create new user")
+        console.log("I got to create new user");
         // Create a new User for the user with the received email
         const newUser = await User.create({
           email: email,
@@ -127,11 +126,11 @@ export async function verifyUserTokenAndLogin(token: string) {
         //   memo: memo,
         //   user: newUser._id,
         // });
-        console.log("I got to createing new wallet")
-        const newWallet = await createWallet(newUser._id)
+        console.log("I got to createing new wallet");
+        const newWallet = await createWallet(newUser._id);
 
-        if(newWallet.error) {
-          return {error: "Error creating wallet for user"}
+        if (newWallet.error) {
+          return { error: "Error creating wallet for user" };
         }
 
         // Create session data
@@ -172,32 +171,40 @@ export async function getMnemonic() {
   const userId = session.userId;
 
   try {
-      // Fetch only the deletedKeyPart field for the user
-      const wallet = await Wallet.findOne({ user: userId }, { deletedKeyPart: 1 });
+    // Fetch only the deletedKeyPart field for the user
+    const wallet = await Wallet.findOne(
+      { user: userId },
+      { deletedKeyPart: 1 },
+    );
 
-      console.log(userId)
+    console.log(userId);
 
-      console.log(wallet)
+    console.log(wallet);
 
-      if (!wallet) {
-          return {error: "Wallet not found"};
-      }
+    if (!wallet) {
+      return { error: "Wallet not found" };
+    }
 
-      // Extract the secret key (deletedKeyPart)
-      const secretKey = wallet.deletedKeyPart;
+    // Extract the secret key (deletedKeyPart)
+    const secretKey = wallet.deletedKeyPart;
 
-      // Clear the secret key from the database
-      await Wallet.updateOne({ user: userId }, { $unset: { deletedKeyPart: '' } });
+    // Clear the secret key from the database
+    await Wallet.updateOne(
+      { user: userId },
+      { $unset: { deletedKeyPart: "" } },
+    );
 
-      return { secretKey: secretKey };
+    return { secretKey: secretKey };
   } catch (error) {
-      console.error('Error in getMnemonic:', error);
-      return { error: 'Error retrieving or clearing mnemonic. Please try again.' };
+    console.error("Error in getMnemonic:", error);
+    return {
+      error: "Error retrieving or clearing mnemonic. Please try again.",
+    };
   }
 }
 
 export const signOut = async () => {
-  console.log("Okay, you caught me!")
+  console.log("Okay, you caught me!");
   const session = await getSession();
   session.destroy();
   redirect("/auth/signin");

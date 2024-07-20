@@ -1,17 +1,15 @@
 "use client";
 
 import { useState } from "react";
-
 import { RiLoader4Line } from "react-icons/ri";
 import { useSearchParams } from "next/navigation";
 import { verifyUserTokenAndLogin } from "@/server/actions/auth/login.action";
 import { NoOutlineButtonBig } from "@/components/shared/buttons";
-import { trusted } from "mongoose";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
   const [verifyResult, setVerifyResult] = useState(
-    "Click the below button to verify your email",
+    "Click the button below to verify your email",
   );
   const [loading, setLoading] = useState(false); // Set loading to false initially
 
@@ -21,23 +19,24 @@ export default function VerifyPage() {
     try {
       setLoading(true); // Set loading to true before verification
       const result = await verifyUserTokenAndLogin(token);
-      if (result.newUser) {
+      if (result.newUser !== undefined) {
         setVerifyResult("You're verified");
 
-        if (result.newUser == true) {
+        // Redirect based on the newUser flag
+        if (result.newUser) {
           // Redirect to copy secret page
           window.location.href = "/auth/secret";
         } else {
           // Redirect to home page if verified
           window.location.href = "/";
         }
-      } else if(result.error) {
+      } else if (result.error) {
         setVerifyResult(result.error);
         // Redirect to sign-in page if not verified
         window.location.href = "/auth/signin";
       }
-    } catch (error: any) {
-      console.error("Error verifying token:", error.message);
+    } catch (error) {
+      console.error("Error verifying token:", error);
       setVerifyResult("Error verifying token");
     } finally {
       setLoading(false); // Set loading to false after verification
