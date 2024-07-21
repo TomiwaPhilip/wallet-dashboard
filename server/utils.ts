@@ -4,26 +4,29 @@ import crypto from "crypto";
 import { Resend } from "resend";
 
 interface SendVerificationRequestParams {
-  url: string;
+  code: string;
   email: string;
 }
+
 export const sendVerificationRequest = async (
   params: SendVerificationRequestParams,
 ) => {
   try {
-    const resend = new Resend(process.env.RESEND_KEY!);
+    const resendKey = process.env.RESEND_KEY;
+    if (!resendKey) {
+      throw new Error("RESEND_KEY is not defined in environment variables");
+    }
+
+    const resend = new Resend(resendKey);
     await resend.emails.send({
       from: "onboarding@mileston.co",
       to: params.email,
       subject: "Login Link to your Account",
-      html:
-        '<p>Click the magic link below to sign in to your account:</p>\
-               <p><a href="' +
-        params.url +
-        '"><b>Sign in</b></a></p>',
+      html: `<p>Copy the below code to sign in to your account:</p>
+             <p>${params.code}</p>`,
     });
-  } catch (error) {
-    console.log({ error });
+  } catch (error: any) {
+    console.error("Error sending verification request:", error.message);
   }
 };
 
@@ -93,18 +96,15 @@ export async function saveSession(session: SessionData): Promise<void> {
   await existingSession.save();
 }
 
-// Function to hash a token
-function hashToken(token: string): string {
-  return crypto.createHash("sha256").update(token).digest("hex");
-}
-
-export function generateToken(): {
-  token: string;
+export function generateVerificationCode(): {
+  code: string;
   generatedAt: Date;
   expiresIn: Date;
 } {
-  // Generate a random token
-  const token = crypto.randomBytes(20).toString("hex");
+  // Generate 5 random numbers
+  const code = Array.from({ length: 5 }, () =>
+    Math.floor(Math.random() * 10),
+  ).join("");
 
   // Current time
   const generatedAt = new Date();
@@ -112,20 +112,5 @@ export function generateToken(): {
   // 5 minutes expiration
   const expiresIn = new Date(generatedAt.getTime() + 5 * 60 * 1000);
 
-  // Encrypt the token using SHA-256 hash function
-  const hashedToken = hashToken(token);
-
-  return { token: hashedToken, generatedAt, expiresIn };
-}
-
-// Function to verify a token
-export function verifyToken(
-  providedToken: string,
-  storedToken: string,
-): boolean {
-  // Hash the provided token
-  const hashedProvidedToken = hashToken(providedToken);
-
-  // Compare the hashed provided token with the stored token
-  return hashedProvidedToken === storedToken;
+  return { code, generatedAt, expiresIn };
 }

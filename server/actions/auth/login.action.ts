@@ -2,94 +2,84 @@
 
 import VerificationToken from "../../schemas/emailTokenSchema";
 import {
-  generateToken,
   sendVerificationRequest,
-  verifyToken,
   saveSession,
+  generateVerificationCode,
 } from "../../utils";
 import connectToDB from "../../model/database";
 import User from "../../schemas/user";
 import getSession from "../server-hooks/getsession.action";
 import { getGoogleAuthUrl } from "@/server/actions/server-hooks/google-auth.action";
 import { redirect } from "next/navigation";
-import Memo from "../../schemas/memo";
-import { generateMemoTag } from "../../helpers/utils";
 import Wallet from "../../schemas/wallet";
 import { createWallet } from "../wallet/wallet.action";
 
 export async function signIn(email: string) {
   console.log("I want to send emails");
   try {
-    connectToDB();
+    await connectToDB();
 
-    // Generate token and URL for verification
-    const { token, generatedAt, expiresIn } = generateToken();
+    // Generate code and timestamps for verification
+    const { code, generatedAt, expiresIn } = generateVerificationCode();
 
-    console.log(token);
-
-    const url = `https://l4t55h-3000.csb.app/auth/verify?token=${token}`;
+    console.log(code);
 
     // Send email with resend.dev
-    await sendVerificationRequest({ url: url, email: email });
+    await sendVerificationRequest({ code, email });
 
     console.log("Email sent!");
 
-    // Save email address, verification token, and expiration time in the database
+    // Save email address, verification code, and expiration time in the database
     const save = await VerificationToken.create({
-      token: token,
-      email: email,
+      token: code, // Use the generated code
+      email,
       createdAt: generatedAt, // Since generated in the function, set current time
       expiresAt: expiresIn,
     });
 
     if (save) {
-      console.log("saved token to DB");
+      console.log("saved code to DB");
     }
 
     // Return a response
     return true;
   } catch (error) {
+    console.error("Error during sign-in:", error);
     return false;
   }
 }
 
-export async function verifyUserTokenAndLogin(token: string) {
+export async function verifyUserTokenAndLogin(code: string) {
   try {
-    connectToDB();
+    await connectToDB();
 
-    const existingToken = await VerificationToken.findOne({ token: token });
+    const existingToken = await VerificationToken.findOne({ token: code });
 
     if (!existingToken) {
-      console.log("Token not found in DB");
-      return { error: "Invalid Credentials!" }; // Token not found in the database
+      console.log("Code not found in DB");
+      return { error: "Invalid Credentials!" }; // Code not found in the database
     }
 
-    // Check if the token has expired
+    // Check if the code has expired
     const currentTime = new Date();
-    const createdAt = existingToken.createdAt;
-    const expiresIn = existingToken.expiresAt;
-    const timeDifference = currentTime.getTime() - createdAt.getTime(); // Time difference in milliseconds
-    const minutesDifference = Math.floor(timeDifference / (1000 * 60)); // Convert milliseconds to minutes
-    if (minutesDifference > 5) {
-      console.log("Token has expired");
-      // If the token has expired, delete the token document from the database
-      await VerificationToken.findOneAndDelete({ token: token });
-      return { error: "Invalid token" }; // Token has expired
+    if (currentTime > existingToken.expiresAt) {
+      console.log("Code has expired");
+      // If the code has expired, delete the token document from the database
+      await VerificationToken.findOneAndDelete({ token: code });
+      return { error: "Invalid code" }; // Code has expired
     }
 
     const email = existingToken.email;
 
     try {
       // Check if the user already exists in the Role collection with the correct login type
-      const existingUser = await User.findOne({ email: email });
+      const existingUser = await User.findOne({ email });
 
       if (existingUser) {
-        // const existingMemo = await Memo.findOne({ user: existingUser._id });
-
         const existingWallet = await Wallet.findOne({ user: existingUser._id });
 
         // Create session data
-        let sessionData = {
+        const sessionData = {
           userId: existingUser._id.toString(),
           email: existingUser.email,
           firstName: existingUser?.firstname || "",
@@ -106,27 +96,22 @@ export async function verifyUserTokenAndLogin(token: string) {
         // Save session
         await saveSession(sessionData);
 
-        // If the token is valid, delete the token document from the database
-        await VerificationToken.findOneAndDelete({ token: token });
+        // If the code is valid, delete the token document from the database
+        await VerificationToken.findOneAndDelete({ token: code });
 
         // Redirect to the dashboard or appropriate page
         return { newUser: false };
       } else {
         // User does not exist, create a new organization and role with the received email
-        console.log("I got to create new user");
+        console.log("Creating new user");
+
         // Create a new User for the user with the received email
         const newUser = await User.create({
-          email: email,
+          email,
           loginType: "email", // or the appropriate login type
         });
 
-        // const memo = generateMemoTag();
-
-        // const newMemo = await Memo.create({
-        //   memo: memo,
-        //   user: newUser._id,
-        // });
-        console.log("I got to createing new wallet");
+        console.log("Creating new wallet");
         const newWallet = await createWallet(newUser._id);
 
         if (newWallet.error) {
@@ -148,8 +133,8 @@ export async function verifyUserTokenAndLogin(token: string) {
         // Save session
         await saveSession(sessionData);
 
-        // If the token is valid, delete the token document from the database
-        await VerificationToken.findOneAndDelete({ token: token });
+        // If the code is valid, delete the token document from the database
+        await VerificationToken.findOneAndDelete({ token: code });
 
         // Redirect to the dashboard or appropriate page
         return { newUser: true };
@@ -159,8 +144,8 @@ export async function verifyUserTokenAndLogin(token: string) {
       return { error: "Error logging in. Try again later!" };
     }
   } catch (error: any) {
-    console.error("Error verifying token:", error.message);
-    return { error: "Error verifying token. Try again later!" };
+    console.error("Error verifying code:", error.message);
+    return { error: "Error verifying code. Try again later!" };
   }
 }
 
