@@ -60,11 +60,9 @@ export async function verifyUserTokenAndLogin(code: string) {
       return { error: "Invalid Credentials!" }; // Code not found in the database
     }
 
-    // Check if the code has expired
     const currentTime = new Date();
     if (currentTime > existingToken.expiresAt) {
       console.log("Code has expired");
-      // If the code has expired, delete the token document from the database
       await VerificationToken.findOneAndDelete({ token: code });
       return { error: "Invalid code" }; // Code has expired
     }
@@ -72,13 +70,11 @@ export async function verifyUserTokenAndLogin(code: string) {
     const email = existingToken.email;
 
     try {
-      // Check if the user already exists in the Role collection with the correct login type
       const existingUser = await User.findOne({ email });
 
       if (existingUser) {
         const existingWallet = await Wallet.findOne({ user: existingUser._id });
 
-        // Create session data
         const sessionData = {
           userId: existingUser._id.toString(),
           email: existingUser.email,
@@ -93,22 +89,17 @@ export async function verifyUserTokenAndLogin(code: string) {
           isLoggedIn: true,
         };
 
-        // Save session
         await saveSession(sessionData);
 
-        // If the code is valid, delete the token document from the database
         await VerificationToken.findOneAndDelete({ token: code });
 
-        // Redirect to the dashboard or appropriate page
         return { newUser: false };
       } else {
-        // User does not exist, create a new organization and role with the received email
         console.log("Creating new user");
 
-        // Create a new User for the user with the received email
         const newUser = await User.create({
           email,
-          loginType: "email", // or the appropriate login type
+          loginType: "email",
         });
 
         console.log("Creating new wallet");
@@ -118,7 +109,6 @@ export async function verifyUserTokenAndLogin(code: string) {
           return { error: "Error creating wallet for user" };
         }
 
-        // Create session data
         const sessionData = {
           userId: newUser._id.toString(),
           email: newUser.email,
@@ -130,13 +120,10 @@ export async function verifyUserTokenAndLogin(code: string) {
           isLoggedIn: true,
         };
 
-        // Save session
         await saveSession(sessionData);
 
-        // If the code is valid, delete the token document from the database
         await VerificationToken.findOneAndDelete({ token: code });
 
-        // Redirect to the dashboard or appropriate page
         return { newUser: true };
       }
     } catch (error: any) {
@@ -148,6 +135,7 @@ export async function verifyUserTokenAndLogin(code: string) {
     return { error: "Error verifying code. Try again later!" };
   }
 }
+
 
 export async function getMnemonic() {
   await connectToDB();

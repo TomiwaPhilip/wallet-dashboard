@@ -2,7 +2,7 @@ import mongoose, { Document, Schema } from "mongoose";
 
 // Define the Invoice interface
 interface Invoice extends Document {
-  amountDue: number;
+  amountDue: string;  // Changed to string
   itemName: string;
   customerEmail: string;
   dueDate: Date;
@@ -16,7 +16,7 @@ interface Invoice extends Document {
 // Define the schema
 const InvoiceSchema: Schema = new Schema(
   {
-    amountDue: { type: Number, required: true },
+    amountDue: { type: String, required: true },  // Changed to string
     itemName: { type: String, required: true },
     customerEmail: { type: String, required: true },
     dueDate: { type: Date, required: true },
@@ -36,7 +36,7 @@ const InvoiceSchema: Schema = new Schema(
   { timestamps: true },
 );
 
-// Export the model
-const InvoiceModel = mongoose.model<Invoice>("Invoice", InvoiceSchema);
+// Check if the model already exists before compiling it
+const InvoiceModel = mongoose.models.Invoice || mongoose.model<Invoice>("Invoice", InvoiceSchema);
 
 export default InvoiceModel;

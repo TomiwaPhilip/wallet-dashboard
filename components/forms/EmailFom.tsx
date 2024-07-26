@@ -2,6 +2,7 @@
 
 import { signIn } from "@/server/actions/auth/login.action";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { StatusMessage } from "../shared/shared";
 import { NoOutlineButtonBig } from "../shared/buttons";
@@ -12,6 +13,7 @@ const EmailForm = () => {
   const [loading, setLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const [isError, setIsError] = useState(false);
+  const router = useRouter();
 
   const validateEmail = (email: any) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,6 +31,7 @@ const EmailForm = () => {
       if (response) {
         setLoading(false);
         setIsEmailSent(true);
+        router.replace("/auth/verify");
       } else {
         setLoading(false);
         setIsError(true);

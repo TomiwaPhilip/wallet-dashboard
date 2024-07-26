@@ -5,6 +5,7 @@ import { NoOutlineButtonIcon } from "../shared/buttons"
 import { FullModal } from "../shared/Modal"
 import { Card2, InvoicesAndPaymentBar } from "../shared/shared"
 import PaymentLink from "../forms/payments/PaymentLink";
+import InvoicePayment from "../forms/payments/InvoicePayment";
 
 export default function Payment() {
 
@@ -91,7 +92,7 @@ export default function Payment() {
         <PaymentLink />
       </FullModal>
       <FullModal isOpen={isModalOpen2} onClose={handleCloseModal2}>
-        <p>I am a modal</p>
+        <InvoicePayment />
       </FullModal>
     </>
   )

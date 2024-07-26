@@ -36,11 +36,11 @@ export async function generateUniqueInvoiceId(): Promise<string> {
 }
 
 interface CreateOrUpdateInvoiceParams {
-  amountDue: number;
+  amountDue: string;
   itemName: string;
   customerEmail: string;
-  dueDate: Date;
-  status?: string;
+  dueDate: string;
+  invoiceId?: string;
 }
 
 export async function createOrUpdateInvoice(
@@ -55,15 +55,22 @@ export async function createOrUpdateInvoice(
   }
 
   try {
-    const invoiceId = await generateUniqueInvoiceId();
-    const { customerEmail, ...updateParams } = params;
+
+    const { customerEmail, dueDate, invoiceId, ...updateParams } = params;
+
+    // Convert dueDate back to Date type
+    const parsedDueDate = new Date(dueDate);
 
     // Query the User document to get the payerUser ID
     const payerUser = await User.findOne({ email: customerEmail });
 
     if (!payerUser) {
-      return { error: "Payer user not found" };
+      return { error: "Customer is not on Mileston" };
     }
+
+    // Calculate the status based on the due date
+    const currentStatus =
+      parsedDueDate < new Date() ? "overdue" : "pending";
 
     if (invoiceId) {
       // Update existing invoice
@@ -78,6 +85,8 @@ export async function createOrUpdateInvoice(
       }
 
       Object.assign(existingInvoice, updateParams, {
+        dueDate: parsedDueDate,
+        status: currentStatus,
         payerUser: payerUser._id,
       });
       await existingInvoice.save();
@@ -97,10 +106,12 @@ export async function createOrUpdateInvoice(
       // Create new invoice
       const newInvoice: any = new InvoiceModel({
         ...updateParams,
+        customerEmail: customerEmail,
+        dueDate: parsedDueDate,
+        status: currentStatus,
         payerUser: payerUser._id,
         receiverUser: session.userId,
         createdAt: new Date(),
-        status: "pending",
       });
 
       await newInvoice.save();
@@ -118,6 +129,7 @@ export async function createOrUpdateInvoice(
     throw new Error("Failed to create or update invoice");
   }
 }
+
 
 export async function getInvoiceDetailsById(invoiceId: string) {
   await connectToDB();

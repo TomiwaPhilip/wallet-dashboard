@@ -1,57 +1,82 @@
 "use client";
 
 import { useState } from "react";
-import { RiLoader4Line } from "react-icons/ri";
 import { useSearchParams } from "next/navigation";
 import { verifyUserTokenAndLogin } from "@/server/actions/auth/login.action";
 import { NoOutlineButtonBig } from "@/components/shared/buttons";
+// import { RiLoader4Line } from "react-icons/ri";
 
 export default function VerifyPage() {
   const searchParams = useSearchParams();
   const [verifyResult, setVerifyResult] = useState(
-    "Click the button below to verify your email",
+    "Enter the code sent to your email below",
   );
-  const [loading, setLoading] = useState(false); // Set loading to false initially
+  const [loading, setLoading] = useState(false);
+  const [codes, setCodes] = useState(Array(5).fill(""));
 
-  const token = searchParams.get("token") as string;
-
-  const handleVerify = async () => {
+  const handleVerify = async (code: string) => {
     try {
-      setLoading(true); // Set loading to true before verification
-      const result = await verifyUserTokenAndLogin(token);
+      setLoading(true);
+      const result = await verifyUserTokenAndLogin(code);
       if (result.newUser !== undefined) {
         setVerifyResult("You're verified");
 
-        // Redirect based on the newUser flag
         if (result.newUser) {
-          // Redirect to copy secret page
           window.location.href = "/auth/secret";
         } else {
-          // Redirect to home page if verified
           window.location.href = "/";
         }
       } else if (result.error) {
         setVerifyResult(result.error);
-        // Redirect to sign-in page if not verified
         window.location.href = "/auth/signin";
       }
     } catch (error) {
       console.error("Error verifying token:", error);
       setVerifyResult("Error verifying token");
     } finally {
-      setLoading(false); // Set loading to false after verification
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value) && value.length <= 1) {
+      const newCodes = [...codes];
+      newCodes[index] = value;
+      setCodes(newCodes);
+    }
+  };
+
+  const handleSubmit = () => {
+    if (codes.every(code => code !== "")) {
+      const fullCode = codes.join("");
+      console.log("Submitted code:", fullCode);
+      handleVerify(fullCode);
+    } else {
+      setVerifyResult("Please fill in all code boxes.");
     }
   };
 
   return (
     <main className="text-center">
-      {loading ? (
-        <RiLoader4Line className="animate-spin text-2xl mb-4" />
-      ) : (
-        <p className="text-center text-xl font-bold p-5">{verifyResult}</p>
-      )}
-      <span onClick={handleVerify}>
-        <NoOutlineButtonBig type="button" name="Verify Me" disabled={loading} />
+      <p className="text-center text-xl font-bold p-5 mb-10">{verifyResult}</p>
+
+      <div className="flex justify-center gap-2 mb-4 text-black mb-10">
+        {codes.map((code, index) => (
+          <input
+            key={index}
+            type="text"
+            maxLength={1}
+            value={code}
+            onChange={(e) => handleInputChange(e, index)}
+            className="w-12 h-12 text-center text-xl border border-[#E0E0E0] rounded-lg bg-[#1B1F2E] text-white"
+            style={{ flex: 1, margin: '0 5px' }}
+          />
+        ))}
+      </div>
+
+      <span onClick={handleSubmit}>
+        <NoOutlineButtonBig type="button" name="Verify Me" disabled={loading} loading={loading} />
       </span>
     </main>
   );

@@ -52,10 +52,8 @@ const PaymentLinkSchema: Schema = new Schema(
   { timestamps: true },
 );
 
-// Export the model
-const PaymentLinkModel = mongoose.model<PaymentLink>(
-  "PaymentLink",
-  PaymentLinkSchema,
-);
+
+// Check if the model already exists before compiling it
+const PaymentLinkModel = mongoose.models.PaymentLink || mongoose.model<PaymentLink>("PaymentLink", PaymentLinkSchema);
 
 export default PaymentLinkModel;
