@@ -181,11 +181,8 @@ export async function getInvoiceDetailsById(
 
     // Return the data in the format expected based on forPayment
     if (forPayment) {
-      console.log("receiver:", invoiceDetails.receiverUser)
       const user: any = await User.findById(invoiceDetails.receiverUser);
-      console.log("User Doc:", user)
       const wallet: any = await Wallet.findOne({ user: invoiceDetails.receiverUser });
-      console.log("Wallet Doc:", wallet)
       return {
         amountDue: invoiceDetails.amountDue || "",
         customerEmail: invoiceDetails.customerEmail || "",
