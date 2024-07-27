@@ -1,9 +1,8 @@
 import Modal from "@/components/shared/Modal";
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { StatusMessage, TransactionMessage } from "@/components/shared/shared";
-import { createOrUpdateInvoice } from "@/server/actions/payments/invoice.action";
-import { trusted } from "mongoose";
-import { useState } from "react";
+import { createOrUpdateInvoice, getInvoiceDetailsById } from "@/server/actions/payments/invoice.action";
+import { useEffect, useState } from "react";
 
 interface FormData {
     amountDue: string;
@@ -13,11 +12,42 @@ interface FormData {
 }
 
 interface InvoicePaymentProps {
-    defaultValues?: FormData;
+    id?: string; // Optional id prop
 }
 
-export default function InvoicePayment({ defaultValues }: InvoicePaymentProps) {
-    const initialFormData: FormData = defaultValues || {
+interface InvoiceDetails {
+    amountDue: string;
+    itemName: string;
+    dueDate: string;
+    customerEmail: string;
+    status?: string; // Include status if needed for checking
+}
+
+interface PaymentDetails {
+    amountDue: string;
+    customerEmail: string;
+    status?: string;
+    receiverUser: string;
+    identifier: string;
+}
+
+interface ErrorResponse {
+    error: string;
+}
+
+type ResponseData = InvoiceDetails | PaymentDetails | ErrorResponse;
+
+function isInvoiceDetails(data: ResponseData): data is InvoiceDetails {
+    return (data as InvoiceDetails).itemName !== undefined;
+}
+
+function isPaymentDetails(data: ResponseData): data is PaymentDetails {
+    return (data as PaymentDetails).amountDue !== undefined && (data as PaymentDetails).customerEmail !== undefined;
+}
+
+export default function InvoicePayment({ id }: InvoicePaymentProps) {
+    // Define initial empty form data
+    const initialFormData: FormData = {
         amountDue: "",
         itemName: "",
         dueDate: "",
@@ -29,22 +59,56 @@ export default function InvoicePayment({ defaultValues }: InvoicePaymentProps) {
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
     const [error, setError] = useState(false);
-
     const [isModalOpen, setIsModalOpen] = useState<boolean | null>(false);
+    const [btnName, setBtnName] = useState("Create an Invoice")
 
-    const handleOpenModal = () => {
-        setIsModalOpen(true);
-    };
-
+    // Function to handle modal close
     const handleCloseModal = () => {
         setIsModalOpen(null);
     };
 
+    // Fetch invoice details if id is provided
+    useEffect(() => {
+        if (id) {
+            const fetchInvoiceData = async () => {
+                try {
+                    const data: ResponseData = await getInvoiceDetailsById(id);
+                    setBtnName("Edit Invoice")
+
+                    console.log(data);
+
+                    if (isInvoiceDetails(data)) {
+                        setFormData({
+                            amountDue: data.amountDue || "",
+                            itemName: data.itemName || "",
+                            dueDate: data.dueDate || "",
+                            email: data.customerEmail || "",
+                        });
+                    } else if (isPaymentDetails(data)) {
+                        // If you need to handle payment details differently, you can do it here
+                        console.log("Payment details:", data);
+                    } else if ((data as ErrorResponse).error) {
+                        setError(true);
+                        setMessage((data as ErrorResponse).error);
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch invoice details:", error);
+                    setError(true);
+                    setMessage("Failed to fetch invoice details.");
+                }
+            };
+
+            fetchInvoiceData();
+        }
+    }, [id]);
+
+    // Handle input changes
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
+    // Validate form data
     const validate = () => {
         const newErrors: Partial<FormData> = {};
         let isValid = true;
@@ -76,23 +140,22 @@ export default function InvoicePayment({ defaultValues }: InvoicePaymentProps) {
         return isValid;
     };
 
+    // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (validate()) {
             setLoading(true);
-            console.log("Form submitted:", formData);
-            // Add your submit logic here
             try {
                 const response = await createOrUpdateInvoice({
                     amountDue: formData.amountDue,
                     itemName: formData.itemName,
                     customerEmail: formData.email,
                     dueDate: formData.dueDate,
-                })
+                    invoiceId: id,
+                });
                 if (response) {
                     setLoading(false);
-
-                    if (response.message != undefined) {
+                    if (response.message) {
                         setError(false);
                         setMessage(response.message);
                         setIsModalOpen(true);
@@ -105,7 +168,7 @@ export default function InvoicePayment({ defaultValues }: InvoicePaymentProps) {
             } catch (error: any) {
                 console.error(error);
                 setLoading(false);
-                setMessage("An unknown error occured!")
+                setMessage("An unknown error occurred!");
                 setError(true);
             }
         }
@@ -186,9 +249,9 @@ export default function InvoicePayment({ defaultValues }: InvoicePaymentProps) {
                         </div>
                     </div>
 
-                    <div className="flex justify-center mt-10">
+                    <div className="flex justify-center mt-[5rem]">
                         <NoOutlineButtonIcon
-                            name="Create an Invoice"
+                            name={btnName}
                             type="submit"
                             iconSrc="/assets/icons/add_diamond.svg"
                             buttonClassName="my-3"

@@ -6,6 +6,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/server/actions/auth/login.action";
 import { useSession } from "./session";
+import { FullModal } from "./Modal";
+import InvoicePayment from "../forms/payments/InvoicePayment";
+import PaymentLink from "../forms/payments/PaymentLink";
 
 export function Nav() {
   const pathname = usePathname();
@@ -19,7 +22,7 @@ export function Nav() {
       name: `${session?.firstName} ${session?.lastName}`,
       profileImage: "/assets/images/profilepic.png",
     };
-  } else if(!session?.firstName && !session?.lastName && session?.image) {
+  } else if (!session?.firstName && !session?.lastName && session?.image) {
     user = {
       name: "New User",
       profileImage: `${session?.image}`,
@@ -28,7 +31,7 @@ export function Nav() {
     user = {
       name: `${session?.firstName} ${session?.lastName}`,
       profileImage: `${session?.image}`,
-    };    
+    };
   }
   else {
     user = {
@@ -291,12 +294,46 @@ export function TransactionMessage(props: TransactionMessageProps) {
   );
 }
 
-interface InvoiceBarProps {
+
+export interface InvoiceBarProps {
   text: string;
   type: 'invoice' | 'paymentLink';
+  url: string;
+  invoiceId: string;
 }
 
-export function InvoicesAndPaymentBar({ text, type }: InvoiceBarProps) {
+export function InvoicesAndPaymentBar({
+  text,
+  type,
+  url,
+  invoiceId,
+}: InvoiceBarProps) {
+  const [showBox, setShowBox] = useState(false);
+  const [copyMessage, setCopyMessage] = useState("Copy URL");
+  const [isModalOpen, setIsModalOpen] = useState<boolean | null>(false);
+  const [isModalOpen2, setIsModalOpen2] = useState<boolean | null>(false);
+  const [id, setId] = useState("");
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+    setIsModalOpen2(null);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(null);
+    setIsModalOpen2(null);
+  };
+
+  const handleOpenModal2 = () => {
+    setIsModalOpen2(true);
+    setIsModalOpen(null);
+  };
+
+  const handleCloseModal2 = () => {
+    setIsModalOpen(null);
+    setIsModalOpen2(null);
+  };
+
   const isPaymentLink = type === 'paymentLink';
   const backgroundColor = isPaymentLink ? 'bg-[#2B3993]' : 'bg-[#464D67]';
   const iconSrc = isPaymentLink
@@ -306,15 +343,65 @@ export function InvoicesAndPaymentBar({ text, type }: InvoiceBarProps) {
     ? 'paymentLink_icon'
     : 'invoice_icon';
 
+  const handleToggleBox = () => {
+    setShowBox(!showBox);
+  };
+
+  const handleCopyUrl = (url: string) => {
+    navigator.clipboard.writeText(url)
+      .then(() => setCopyMessage("Copied!"))
+      .catch(err => console.error("Failed to copy URL: ", err));
+  };
+
+  const handleEdit = (invoiceId: string) => {
+    // Implement your edit logic here
+    setId(invoiceId)
+    if (type === "invoice") {
+      handleOpenModal2();
+    } else {
+      handleOpenModal();
+    }
+    console.log("Edit payment with ID: ", invoiceId);
+  };
+
   return (
-    <div className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}>
-      <Image
-        src={iconSrc}
-        alt={iconAlt}
-        height={25}
-        width={25}
-      />
-      <p className="transaction-text">{text}</p>
-    </div>
+    <>
+      <div className="relative pointer">
+        <div
+          className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}
+          onClick={handleToggleBox}
+        >
+          <Image
+            src={iconSrc}
+            alt={iconAlt}
+            height={25}
+            width={25}
+          />
+          <p className="transaction-text">{text}</p>
+        </div>
+        {showBox && (
+          <div className="absolute top-0 left-0 mt-8 w-40 p-2 bg-[#1B1F2E] rounded-lg shadow-lg z-10">
+            <button
+              className="w-full text-left text-sm text-white mb-2"
+              onClick={() => handleCopyUrl(url)}
+            >
+              {copyMessage}
+            </button>
+            <button
+              className="w-full text-left text-sm text-white"
+              onClick={() => handleEdit(invoiceId)}
+            >
+              Edit
+            </button>
+          </div>
+        )}
+      </div>
+      <FullModal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <PaymentLink />
+      </FullModal>
+      <FullModal isOpen={isModalOpen2} onClose={handleCloseModal2}>
+        <InvoicePayment id={id} />
+      </FullModal>
+    </>
   );
 }

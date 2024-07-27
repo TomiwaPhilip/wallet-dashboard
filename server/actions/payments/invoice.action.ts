@@ -10,6 +10,9 @@ import {
   sendFundsToWallet,
 } from "../transactions/send.action";
 import PaymentLinkModel from "@/server/schemas/paymentLink";
+import mongoose from "mongoose";
+import { InvoiceBarProps } from "@/components/shared/shared";
+import Wallet from "@/server/schemas/wallet";
 
 /**
  * Generates a unique invoice ID starting with 'Mileston-' followed by a random 5-character string.
@@ -131,23 +134,72 @@ export async function createOrUpdateInvoice(
 }
 
 
-export async function getInvoiceDetailsById(invoiceId: string) {
+export interface InvoiceDetails {
+  amountDue: string;
+  itemName: string;
+  dueDate: string;
+  customerEmail: string;
+}
+
+export interface PaymentDetails {
+  amountDue: string;
+  customerEmail: string;
+  status: string;
+  receiverUser: string;
+  identifier: string;
+}
+
+export async function getInvoiceDetailsById(
+  invoiceId: string,
+  forPayment?: boolean
+): Promise<InvoiceDetails | PaymentDetails | { error: string }> {
   await connectToDB();
 
   try {
-    // Select only necessary fields and exclude _id, receiverUser, payerUser, and timestamps
-    const invoiceDetails = await InvoiceModel.findById(invoiceId)
-      .select("-_id -receiverUser -createdAt -updatedAt")
+    // Determine which fields to select based on the forPayment parameter
+    const selectFields = forPayment
+      ? "amountDue customerEmail status receiverUser"
+      : "amountDue itemName dueDate customerEmail status";
+
+    // Fetch invoice details
+    const invoiceDetails: any = await InvoiceModel.findById(invoiceId)
+      .select(selectFields)
       .lean(); // Convert to a plain JavaScript object
 
     if (!invoiceDetails) {
-      throw new Error("Invoice not found");
+      return { error: "Invoice not found" };
     }
 
-    if (invoiceDetails.status === "expired") {
-      return { error: "Invoice Details has expired" };
+    if (invoiceDetails.status === "paid") {
+      return { error: "Invoice has been expired" };
+    }
+
+    // Convert and format the dueDate for input[type="date"]
+    const formattedDueDate = invoiceDetails.dueDate
+      ? new Date(invoiceDetails.dueDate).toISOString().split('T')[0]
+      : "";
+
+    // Return the data in the format expected based on forPayment
+    if (forPayment) {
+      console.log("receiver:", invoiceDetails.receiverUser)
+      const user: any = await User.findById(invoiceDetails.receiverUser);
+      console.log("User Doc:", user)
+      const wallet: any = await Wallet.findOne({ user: invoiceDetails.receiverUser });
+      console.log("Wallet Doc:", wallet)
+      return {
+        amountDue: invoiceDetails.amountDue || "",
+        customerEmail: invoiceDetails.customerEmail || "",
+        status: invoiceDetails.status || "",
+        receiverUser: user.email || "",
+        identifier: wallet.solanaPublicKey || "",
+      };
     } else {
-      return invoiceDetails;
+      return {
+        amountDue: invoiceDetails.amountDue || "",
+        itemName: invoiceDetails.itemName || "",
+        dueDate: formattedDueDate || "",
+        customerEmail: invoiceDetails.customerEmail || "",
+      };
     }
   } catch (error: any) {
     console.error("Error getting invoice details from DB:", error.message);
@@ -198,7 +250,17 @@ export async function payInvoice(params: PayInvoice) {
   }
 }
 
-export async function fetchPaymentLinkAndInvoice() {
+interface InvoiceDocument {
+  _id: mongoose.Types.ObjectId;
+  createdAt: Date;
+}
+
+interface PaymentLinkDocument {
+  _id: mongoose.Types.ObjectId;
+  createdAt: Date;
+}
+
+export async function fetchPaymentLinkAndInvoice(): Promise<InvoiceBarProps[] | null> {
   await connectToDB();
 
   const session = await getSession();
@@ -208,35 +270,43 @@ export async function fetchPaymentLinkAndInvoice() {
   }
 
   try {
-    const invoice = await InvoiceModel.find({
+    const invoiceDocs = await InvoiceModel.find({
       receiverUser: session.userId,
     })
       .select("_id createdAt")
-      .sort({ timestamp: -1 })
+      .sort({ createdAt: -1 })
       .limit(3)
-      .lean();
+      .lean() as InvoiceDocument[];
 
-    const payment = await PaymentLinkModel.find({
+    const paymentDocs = await PaymentLinkModel.find({
       receiverUser: session.userId,
     })
       .select("_id createdAt")
-      .sort({ timestamp: -1 })
+      .sort({ createdAt: -1 })
       .limit(3)
-      .lean();
+      .lean() as PaymentLinkDocument[];
 
-    if (invoice.length > 0 || payment.length > 0) {
-      return {
-        invoice: invoice,
-        payment: payment,
-      };
+    if (invoiceDocs.length > 0 || paymentDocs.length > 0) {
+      const invoiceData = invoiceDocs.map((inv) => ({
+        type: "invoice" as const,
+        text: `Invoice created on ${new Date(inv.createdAt).toLocaleDateString()}: ID: ${inv._id.toString()}`,
+        url: `https://mileston.co/invoice/${inv._id.toString()}`,
+        invoiceId: inv._id.toString(),
+      }));
+
+      const paymentData = paymentDocs.map((pay) => ({
+        type: "paymentLink" as const,
+        text: `Payment Link created on ${new Date(pay.createdAt).toLocaleDateString()}: ID: ${pay._id.toString()}`,
+        url: `https://mileston.co/payment/${pay._id.toString()}`,
+        invoiceId: pay._id.toString(),
+      }));
+
+      return [...invoiceData, ...paymentData];
     } else {
-      return { error: "No invoice or payment details found" };
+      return null;
     }
   } catch (error: any) {
-    console.error(
-      "Error retrieving invoice and payment details from DB:",
-      error,
-    );
-    return { error: "Unable to retrieve invoice and payment details" };
+    console.error("Error retrieving invoice and payment details from DB:", error);
+    return null;
   }
 }

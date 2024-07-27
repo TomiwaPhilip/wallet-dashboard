@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { NoOutlineButtonIcon } from "../shared/buttons"
-import { FullModal } from "../shared/Modal"
-import { Card2, InvoicesAndPaymentBar } from "../shared/shared"
+import { useEffect, useState } from "react";
+import { NoOutlineButtonIcon } from "../shared/buttons";
+import { FullModal } from "../shared/Modal";
+import { Card2, InvoiceBarProps, InvoicesAndPaymentBar } from "../shared/shared";
 import PaymentLink from "../forms/payments/PaymentLink";
 import InvoicePayment from "../forms/payments/InvoicePayment";
+import { fetchPaymentLinkAndInvoice } from "@/server/actions/payments/invoice.action";
 
 export default function Payment() {
-
   const [isModalOpen, setIsModalOpen] = useState<boolean | null>(false);
   const [isModalOpen2, setIsModalOpen2] = useState<boolean | null>(false);
+  const [invoiceBarData, setInvoiceBarData] = useState<InvoiceBarProps[] | null>(null);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -31,6 +32,15 @@ export default function Payment() {
     setIsModalOpen(null);
     setIsModalOpen2(null);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchPaymentLinkAndInvoice();
+      setInvoiceBarData(data);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -65,26 +75,19 @@ export default function Payment() {
             <h3 className="font-medium text-[20px] mb-5">
               Recent Invoices & Payments
             </h3>
-            <InvoicesAndPaymentBar
-              type="paymentLink"
-              text="Payment Link created on 05-09-2024: ID: 8IONH9"
-            />
-            <InvoicesAndPaymentBar
-              type="invoice"
-              text="Invoice created on 12-04-2024. ID:  6YG78HU"
-            />
-            <InvoicesAndPaymentBar
-              type="paymentLink"
-              text="Payment Link created on 05-09-2024: ID: 8IONH9"
-            />
-            <InvoicesAndPaymentBar
-              type="invoice"
-              text="Invoice created on 12-04-2024. ID:  6YG78HU"
-            />
-            <InvoicesAndPaymentBar
-              type="invoice"
-              text="Invoice created on 12-04-2024. ID:  6YG78HU"
-            />
+            {invoiceBarData ? (
+              invoiceBarData.map((data, index) => (
+                <InvoicesAndPaymentBar
+                  key={index}
+                  type={data.type}
+                  text={data.text}
+                  url={data.url}
+                  invoiceId={data.invoiceId}
+                />
+              ))
+            ) : (
+              <p>No recent invoices or payment links found.</p>
+            )}
           </Card2>
         </div>
       </div>
@@ -95,5 +98,5 @@ export default function Payment() {
         <InvoicePayment />
       </FullModal>
     </>
-  )
+  );
 }
