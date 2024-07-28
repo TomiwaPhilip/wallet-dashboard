@@ -51,10 +51,10 @@ const PaymentLink: React.FC = () => {
       newErrors.description = "Description is required";
     }
 
-    if (!formData.redirectUrl) {
-      newErrors.redirectUrl = "Redirect URL is required";
-    } else if (!/^https?:\/\//.test(formData.redirectUrl)) {
-      newErrors.redirectUrl = "Redirect URL must be a valid URL";
+    if (formData.redirectUrl) {
+      if (!/^https?:\/\//.test(formData.redirectUrl)) {
+        newErrors.redirectUrl = "Redirect URL must be a valid URL";
+      }
     }
 
     setErrors(newErrors);
@@ -290,7 +290,7 @@ const PaymentLink: React.FC = () => {
         <div className="w-px bg-[#464D67] h-[70vh]"></div>
 
         {/* Live Preview Component */}
-        <div className="w-1/2 p-4 bg-[#1a1c22] rounded-3xl">
+        <div className="w-1/2 p-4 bg-[#B5B5B5] rounded-3xl">
           <PaymentPageComp
             amount={formData.amount}
             title={formData.title}
