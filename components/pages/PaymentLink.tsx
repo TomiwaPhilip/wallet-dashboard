@@ -176,9 +176,10 @@ export default function PaymentLink({ paymentLinkId }: Props) {
   return (
     <>
       <div
-        className={`${paymentDetails?.backgroundColor || "bg-[#0A0C13]"} ${
-          paymentDetails?.textColor || "text-white`"
-        }`}
+        style={{
+          backgroundColor: paymentDetails?.backgroundColor || "#0A0C13",
+          color: paymentDetails?.textColor || "#fff",
+        }}
       >
         <div className="">
           <Image

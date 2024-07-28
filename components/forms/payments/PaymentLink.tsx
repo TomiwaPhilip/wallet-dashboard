@@ -8,17 +8,17 @@ import { PaymentLinkFormDetails } from "@/server/actions/payments/paymentlink.ac
 
 const PaymentLink: React.FC = () => {
   const [formData, setFormData] = useState<PaymentLinkFormDetails>({
-    amount: "",
-    title: "",
-    description: "",
+    amount: "0",
+    title: "Title",
+    description: "Description",
     redirectUrl: "", // Initialize as empty string or undefined based on your logic
     customerInfo: "yes",
     bannerImage: "", // Initialize optional fields as empty string or undefined
     logoImage: "",
-    backgroundColor: "",
-    foregroundColor: "",
-    textColor: "",
-    buttonColor: "",
+    backgroundColor: "#0A0C13",
+    foregroundColor: "#0e1018",
+    textColor: "#ffffff",
+    buttonColor: "#263382",
   });
 
   const [errors, setErrors] = useState<Partial<PaymentLinkFormDetails>>({});
@@ -163,10 +163,10 @@ const PaymentLink: React.FC = () => {
                 Any other information from customer?
               </label>
               <select
-                name="usdcNetwork"
+                name="customerInfodcNetwork"
                 value={formData.customerInfo}
                 onChange={handleChange}
-                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border`}
+                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border-[#979EB8] rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]`}
               >
                 <option value="nil" disabled>
                   Select
@@ -200,7 +200,7 @@ const PaymentLink: React.FC = () => {
                     name="bannerImage"
                     id="bannerUpload"
                     onChange={handleChange}
-                    className="mt-1 block hidden w-full px-3 py-2 bg-[#131621] border border-[#979EB8] rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]"
+                    className="mt-1 block hidden px-3 py-2 bg-[#131621] border border-[#979EB8] rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]"
                   />
                 </div>
 
@@ -217,7 +217,7 @@ const PaymentLink: React.FC = () => {
                     name="logoImage"
                     id="logoUpload"
                     onChange={handleChange}
-                    className="mt-1 block hidden w-full px-3 py-2 bg-[#131621] border border-[#979EB8] rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]"
+                    className="mt-1 block hidden px-3 py-2 bg-[#131621] border border-[#979EB8] rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]"
                   />
                 </div>
 
@@ -290,7 +290,7 @@ const PaymentLink: React.FC = () => {
         <div className="w-px bg-[#464D67] h-[70vh]"></div>
 
         {/* Live Preview Component */}
-        <div className="w-1/2 p-4 bg-[#1a1c22] rounded-xl">
+        <div className="w-1/2 p-4 bg-[#1a1c22] rounded-3xl">
           <PaymentPageComp
             amount={formData.amount}
             title={formData.title}

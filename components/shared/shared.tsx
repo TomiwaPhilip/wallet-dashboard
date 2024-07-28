@@ -218,12 +218,11 @@ interface CardProps2 extends CardProps {
   bgColor?: string;
 }
 
-export function Card2({ children, bgColor }: CardProps2): JSX.Element {
+export function Card2({ children, ...params }: CardProps2): JSX.Element {
   return (
     <div
-      className={`${
-        bgColor || "cards-bg"
-      } border-2 border-[#23283A] p-10 rounded-3xl w-full`}
+      className={`border-2 border-[#23283A] p-10 rounded-3xl w-full`}
+      style={{ backgroundColor: params?.bgColor || "#0e1018" }}
     >
       {children}
     </div>
