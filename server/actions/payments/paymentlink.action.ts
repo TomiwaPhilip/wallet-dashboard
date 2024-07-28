@@ -112,7 +112,7 @@ export async function getPaymentDetailsById(
       .lean(); // Convert to a plain JavaScript object
 
     if (!paymentDetails) {
-      throw new Error("Payment link not found");
+      return { error: "Payment Link not found" };
     }
 
     // Return the data in the format expected based on forPayment
@@ -122,33 +122,33 @@ export async function getPaymentDetailsById(
         user: paymentDetails.receiverUser,
       });
       return {
-        amount: paymentDetails.amount || '',
-        title: paymentDetails.title || '',
-        description: paymentDetails.description || '',
-        redirectUrl: paymentDetails.redirectUrl || '',
-        customerInfo: paymentDetails.customerInfo || '',
-        bannerImage: paymentDetails.bannerImage || '',
-        logoImage: paymentDetails.logoImage || '',
-        backgroundColor: paymentDetails.backgroundColor || '',
-        foregroundColor: paymentDetails.foregroundColor || '',
-        textColor: paymentDetails.textColor || '',
-        buttonColor: paymentDetails.buttonColor || '',
+        amount: paymentDetails.amount || "",
+        title: paymentDetails.title || "",
+        description: paymentDetails.description || "",
+        redirectUrl: paymentDetails.redirectUrl || "",
+        customerInfo: paymentDetails.customerInfo || "",
+        bannerImage: paymentDetails.bannerImage || "",
+        logoImage: paymentDetails.logoImage || "",
+        backgroundColor: paymentDetails.backgroundColor || "",
+        foregroundColor: paymentDetails.foregroundColor || "",
+        textColor: paymentDetails.textColor || "",
+        buttonColor: paymentDetails.buttonColor || "",
         receiverUser: user.email || "",
         identifier: wallet.solanaPublicKey || "",
       };
     } else {
       return {
-        amount: paymentDetails.amount || '',
-        title: paymentDetails.title || '',
-        description: paymentDetails.description || '',
-        redirectUrl: paymentDetails.redirectUrl || '',
-        customerInfo: paymentDetails.customerInfo || '',
-        bannerImage: paymentDetails.bannerImage || '',
-        logoImage: paymentDetails.logoImage || '',
-        backgroundColor: paymentDetails.backgroundColor || '',
-        foregroundColor: paymentDetails.foregroundColor || '',
-        textColor: paymentDetails.textColor || '',
-        buttonColor: paymentDetails.buttonColor || '',
+        amount: paymentDetails.amount || "",
+        title: paymentDetails.title || "",
+        description: paymentDetails.description || "",
+        redirectUrl: paymentDetails.redirectUrl || "",
+        customerInfo: paymentDetails.customerInfo || "",
+        bannerImage: paymentDetails.bannerImage || "",
+        logoImage: paymentDetails.logoImage || "",
+        backgroundColor: paymentDetails.backgroundColor || "",
+        foregroundColor: paymentDetails.foregroundColor || "",
+        textColor: paymentDetails.textColor || "",
+        buttonColor: paymentDetails.buttonColor || "",
       };
     }
   } catch (error: any) {

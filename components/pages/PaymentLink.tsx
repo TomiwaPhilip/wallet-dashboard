@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { useSession } from "../shared/session";
 import Modal from "../shared/Modal";
 import {
+  PaymentDetails,
+  PaymentLinkFormDetails,
   getPaymentDetailsById,
   payUser,
 } from "@/server/actions/payments/paymentlink.action";
@@ -18,7 +20,28 @@ interface Props {
   paymentLinkId: string;
 }
 
+interface ErrorResponse {
+  error: string;
+}
+
+type ResponseData = PaymentLinkFormDetails | PaymentDetails | ErrorResponse;
+
+function isPaymentDetails(data: ResponseData): data is PaymentDetails {
+  return (
+    (data as PaymentDetails).amount !== undefined &&
+    (data as PaymentDetails).receiverUserEmail !== undefined
+  );
+}
+
+// Type guard to check if the response is an error
+function isErrorResponse(response: any): response is ErrorResponse {
+  return response && typeof response.error === "string";
+}
+
 export default function PaymentLink({ paymentLinkId }: Props) {
+  const [paymentDetails, setPaymentDetails] = useState<PaymentDetails | null>(
+    null
+  );
   const [formData, setFormData] = useState<FormData>({
     secretPhrase: "",
     customerInfo: "",
@@ -51,6 +74,11 @@ export default function PaymentLink({ paymentLinkId }: Props) {
       }
     }
 
+    // Validate customerInfo
+    if (!data.customerInfo) {
+      newErrors.customerInfo = "Customer info is required!";
+    }
+
     return newErrors;
   };
 
@@ -73,7 +101,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
           setMessage(data.error);
         } else if (isPaymentDetails(data)) {
           setPaymentDetails(data);
-          if (session?.email === paymentDetails?.receiverUser) {
+          if (session?.email === paymentDetails?.receiverUserEmail) {
             setDisable(true);
           }
         }
@@ -113,7 +141,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
         const response = await payUser({
           identifier: paymentDetails?.identifier as string,
           secretPhrase: formData.secretPhrase,
-          amount: paymentDetails?.amountDue as string,
+          amount: paymentDetails?.amount as string,
           paymentLinkId: paymentLinkId,
         });
 
@@ -167,16 +195,8 @@ export default function PaymentLink({ paymentLinkId }: Props) {
               />
             </div>
             <div className="">
-              <h2 className="font-bold text-[36px]">
-                Tomiwa Philip Payment Page
-              </h2>
-              <p className="text-[16px]">
-                Description, more description and even more description
-                Description, more description and even more description and
-                Description, more description and even more description and
-                Description, more description and even more description
-                Description, more description and even more description
-              </p>
+              <h2 className="font-bold text-[36px]">{paymentDetails?.title}</h2>
+              <p className="text-[16px]">{paymentDetails?.description}</p>
             </div>
           </div>
           <div className="flex items-center justify-center">
@@ -197,7 +217,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
                   <div className="mt-10 text-[32px] font-bold w-full flex justify-between items-center">
                     <p>Amount to Pay:</p>
                     <div className="flex items-center">
-                      <p>{paymentDetails?.amountDue}</p>
+                      <p>{paymentDetails?.amount}</p>
                       <Image
                         src={"/assets/icons/usdc_icon.svg"}
                         alt="usdc_icon"
