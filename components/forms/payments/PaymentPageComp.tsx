@@ -36,30 +36,30 @@ export default function PaymentPageComp(params: PaymentLinkFormDetails) {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <Card2>
-                <p className="font-bold text-[36px] text-center">
-                  Pay with Mileston
-                </p>
-                <div className="mt-10 text-[32px] font-bold w-full flex justify-between items-center">
-                  <p>Amount to Pay:</p>
-                  <div className="flex items-center">
-                    <p>{params?.amount}</p>
-                    <Image
-                      src={"/assets/icons/usdc_icon.svg"}
-                      alt="usdc_icon"
-                      width={35}
-                      height={35}
-                    />
-                  </div>
-                </div>
-                <div className="mt-[4rem]">
-                  <NoOutlineButtonBig
-                    type="button"
-                    name="Pay with Mileston"
-                    disabled={true}
-                    btnColor={params?.buttonColor}
-                  />
-                </div>
+          <Card2 bgColor={params?.foregroundColor}>
+            <p className="font-bold text-[36px] text-center">
+              Pay with Mileston
+            </p>
+            <div className="mt-10 text-[32px] font-bold w-full flex justify-between items-center">
+              <p>Amount to Pay:</p>
+              <div className="flex items-center">
+                <p>{params?.amount}</p>
+                <Image
+                  src={"/assets/icons/usdc_icon.svg"}
+                  alt="usdc_icon"
+                  width={35}
+                  height={35}
+                />
+              </div>
+            </div>
+            <div className="mt-[4rem]">
+              <NoOutlineButtonBig
+                type="button"
+                name="Pay with Mileston"
+                disabled={true}
+                btnColor={params?.buttonColor}
+              />
+            </div>
           </Card2>
         </div>
       </div>

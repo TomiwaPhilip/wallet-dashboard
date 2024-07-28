@@ -3,23 +3,11 @@ import {
   NoOutlineButtonIcon,
 } from "@/components/shared/buttons";
 import React, { useState } from "react";
-
-interface FormData {
-  amount: string;
-  title: string;
-  description: string;
-  redirectUrl?: string; // Make redirectUrl optional
-  customerInfo: string;
-  bannerImage?: string; // Optional fields for customization
-  logoImage?: string;
-  backgroundColor?: string;
-  foregroundColor?: string;
-  textColor?: string;
-  buttonColor?: string;
-}
+import PaymentPageComp from "./PaymentPageComp";
+import { PaymentLinkFormDetails } from "@/server/actions/payments/paymentlink.action";
 
 const PaymentLink: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<PaymentLinkFormDetails>({
     amount: "",
     title: "",
     description: "",
@@ -33,7 +21,7 @@ const PaymentLink: React.FC = () => {
     buttonColor: "",
   });
 
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<Partial<PaymentLinkFormDetails>>({});
 
   const [showCustomization, setShowCustomization] = useState(false);
 
@@ -47,7 +35,7 @@ const PaymentLink: React.FC = () => {
   };
 
   const validate = (): boolean => {
-    const newErrors: Partial<FormData> = {};
+    const newErrors: Partial<PaymentLinkFormDetails> = {};
 
     if (!formData.amount) {
       newErrors.amount = "Amount is required";
@@ -76,7 +64,7 @@ const PaymentLink: React.FC = () => {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -168,6 +156,24 @@ const PaymentLink: React.FC = () => {
                   {errors.redirectUrl}
                 </p>
               )}
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium">
+                Any other information from customer?
+              </label>
+              <select
+                name="usdcNetwork"
+                value={formData.customerInfo}
+                onChange={handleChange}
+                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border`}
+              >
+                <option value="nil" disabled>
+                  Select
+                </option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
             </div>
 
             {/* Toggle for customization options */}
@@ -285,7 +291,17 @@ const PaymentLink: React.FC = () => {
 
         {/* Live Preview Component */}
         <div className="w-1/2 p-4 bg-[#1a1c22] rounded-xl">
-          <PaymentPageComp />
+          <PaymentPageComp
+            amount={formData.amount}
+            title={formData.title}
+            buttonColor={formData.buttonColor}
+            backgroundColor={formData.backgroundColor}
+            textColor={formData.textColor}
+            foregroundColor={formData.foregroundColor}
+            description={formData.description}
+            logoImage={formData.logoImage}
+            bannerImage={formData.bannerImage}
+          />
         </div>
       </div>
     </div>

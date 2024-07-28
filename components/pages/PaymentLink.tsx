@@ -208,7 +208,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
             </div>
           </div>
           <div className="flex items-center justify-center">
-            <Card2>
+            <Card2 bgColor={paymentDetails?.foregroundColor}>
               {message ? (
                 <p
                   className={`text-center ${

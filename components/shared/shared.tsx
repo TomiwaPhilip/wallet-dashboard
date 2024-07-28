@@ -32,30 +32,32 @@ export function Nav() {
       name: `${session?.firstName} ${session?.lastName}`,
       profileImage: `${session?.image}`,
     };
-  }
-  else {
+  } else {
     user = {
       name: "New User",
       profileImage: "/assets/images/profilepic.png",
-    }
-  };
+    };
+  }
 
   const handleSignOut = async () => {
-    console.log("I am signing out")
+    console.log("I am signing out");
     await signOut();
   };
-
 
   return (
     <div className="flex justify-center items-center gap-4">
       <div className="bg-[#0E1018] p-4 rounded-full border border-[#131621]">
         <ul className="flex items-center gap-10">
           <li
-            className={`gradient-border rounded-full ${pathname === "/" ? "normal-gradient-border" : ""}`}
+            className={`gradient-border rounded-full ${
+              pathname === "/" ? "normal-gradient-border" : ""
+            }`}
           >
             <Link
               href="/"
-              className={"flex items-center gap-2 bg-[#0E1018] rounded-full p-2"}
+              className={
+                "flex items-center gap-2 bg-[#0E1018] rounded-full p-2"
+              }
             >
               <Image
                 src="/assets/icons/add_home.svg"
@@ -67,11 +69,15 @@ export function Nav() {
             </Link>
           </li>
           <li
-            className={`gradient-border rounded-full ${pathname === "/payments" ? "normal-gradient-border" : ""}`}
+            className={`gradient-border rounded-full ${
+              pathname === "/payments" ? "normal-gradient-border" : ""
+            }`}
           >
             <Link
               href="/payments"
-              className={"flex items-center gap-2 bg-[#0E1018] p-2 rounded-full"}
+              className={
+                "flex items-center gap-2 bg-[#0E1018] p-2 rounded-full"
+              }
             >
               <Image
                 src="/assets/icons/monetization_on.svg"
@@ -83,11 +89,15 @@ export function Nav() {
             </Link>
           </li>
           <li
-            className={`gradient-border rounded-full ${pathname === "/settings" ? "normal-gradient-border" : ""}`}
+            className={`gradient-border rounded-full ${
+              pathname === "/settings" ? "normal-gradient-border" : ""
+            }`}
           >
             <Link
               href="/settings"
-              className={"flex items-center gap-2 bg-[#0E1018] rounded-full p-2"}
+              className={
+                "flex items-center gap-2 bg-[#0E1018] rounded-full p-2"
+              }
             >
               <Image
                 src="/assets/icons/admin_panel_settings.svg"
@@ -135,22 +145,28 @@ export function Nav() {
   );
 }
 
-
-
 interface TabsProps {
   isAccountActive: boolean;
   isPaymentActive: boolean;
-  onTabChange: (tab: 'account' | 'payment') => void;
+  onTabChange: (tab: "account" | "payment") => void;
 }
 
-export function Tabs({ isAccountActive, isPaymentActive, onTabChange }: TabsProps) {
+export function Tabs({
+  isAccountActive,
+  isPaymentActive,
+  onTabChange,
+}: TabsProps) {
   return (
     <div className="flex justify-start items-start w-full">
       <nav className="bg-[#0E1018] p-4 rounded-full border border-[#131621] w-full">
         <ul className="flex items-center gap-10 w-full">
-          <li className={`gradient-border rounded-full ${isAccountActive ? "normal-gradient-border" : ""} flex-1`}>
+          <li
+            className={`gradient-border rounded-full ${
+              isAccountActive ? "normal-gradient-border" : ""
+            } flex-1`}
+          >
             <div
-              onClick={() => onTabChange('account')}
+              onClick={() => onTabChange("account")}
               className="flex items-center gap-2 bg-[#0E1018] rounded-full p-2 w-full justify-center cursor-pointer"
             >
               <Image
@@ -162,9 +178,13 @@ export function Tabs({ isAccountActive, isPaymentActive, onTabChange }: TabsProp
               Account
             </div>
           </li>
-          <li className={`gradient-border rounded-full ${isPaymentActive ? "normal-gradient-border" : ""} flex-1`}>
+          <li
+            className={`gradient-border rounded-full ${
+              isPaymentActive ? "normal-gradient-border" : ""
+            } flex-1`}
+          >
             <div
-              onClick={() => onTabChange('payment')}
+              onClick={() => onTabChange("payment")}
               className="flex items-center gap-2 bg-[#0E1018] p-2 rounded-full w-full justify-center cursor-pointer"
             >
               <Image
@@ -182,9 +202,6 @@ export function Tabs({ isAccountActive, isPaymentActive, onTabChange }: TabsProp
   );
 }
 
-
-
-
 interface CardProps {
   children: ReactNode;
 }
@@ -197,9 +214,17 @@ export function Card({ children }: CardProps): JSX.Element {
   );
 }
 
-export function Card2({ children }: CardProps): JSX.Element {
+interface CardProps2 extends CardProps {
+  bgColor?: string;
+}
+
+export function Card2({ children, bgColor }: CardProps2): JSX.Element {
   return (
-    <div className="cards-bg border-2 border-[#23283A] p-10 rounded-3xl w-full">
+    <div
+      className={`${
+        bgColor || "cards-bg"
+      } border-2 border-[#23283A] p-10 rounded-3xl w-full`}
+    >
       {children}
     </div>
   );
@@ -229,8 +254,11 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
 
   return (
     <div
-      className={`fixed top-5 right-5 p-3 rounded-md text-white flex items-center ${type === "error" ? "bg-[#E40686]" : "bg-[#5EE398]"
-        } ${isVisible ? "opacity-100" : "opacity-0"} transition-opacity duration-300`}
+      className={`fixed top-5 right-5 p-3 rounded-md text-white flex items-center ${
+        type === "error" ? "bg-[#E40686]" : "bg-[#5EE398]"
+      } ${
+        isVisible ? "opacity-100" : "opacity-0"
+      } transition-opacity duration-300`}
     >
       <div className="flex-shrink-0 mr-3">
         <Image src={iconSrc} alt="Icon" width={24} height={24} />
@@ -242,32 +270,26 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
 
 interface TransactionBarProps {
   text: string;
-  type: 'received' | 'sent';
+  type: "received" | "sent";
 }
 
 export function TransactionBar({ text, type }: TransactionBarProps) {
-  const isReceived = type === 'received';
-  const backgroundColor = isReceived ? 'bg-[#2B3993]' : 'bg-[#464D67]';
+  const isReceived = type === "received";
+  const backgroundColor = isReceived ? "bg-[#2B3993]" : "bg-[#464D67]";
   const iconSrc = isReceived
-    ? '/assets/icons/arrow_circle_right.svg'
-    : '/assets/icons/arrow_circle_left.svg';
-  const iconAlt = isReceived
-    ? 'arrow_right_icon'
-    : 'arrow_left_icon';
+    ? "/assets/icons/arrow_circle_right.svg"
+    : "/assets/icons/arrow_circle_left.svg";
+  const iconAlt = isReceived ? "arrow_right_icon" : "arrow_left_icon";
 
   return (
-    <div className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}>
-      <Image
-        src={iconSrc}
-        alt={iconAlt}
-        height={25}
-        width={25}
-      />
+    <div
+      className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}
+    >
+      <Image src={iconSrc} alt={iconAlt} height={25} width={25} />
       <p className="transaction-text">{text}</p>
     </div>
   );
 }
-
 
 interface TransactionMessageProps {
   message: string;
@@ -278,14 +300,14 @@ export function TransactionMessage(props: TransactionMessageProps) {
   const { message, type } = props;
 
   const imageUrl = type
-    ? '/assets/icons/bubble_(1).svg'  // URL for success image
-    : '/assets/icons/problem_(1).svg';   // URL for error image
+    ? "/assets/icons/bubble_(1).svg" // URL for success image
+    : "/assets/icons/problem_(1).svg"; // URL for error image
 
   return (
     <div className="flex flex-col items-center justify-center text-center">
       <Image
         src={imageUrl}
-        alt={type ? 'success' : 'error'} // Alt text based on type
+        alt={type ? "success" : "error"} // Alt text based on type
         height={200}
         width={200}
       />
@@ -294,10 +316,9 @@ export function TransactionMessage(props: TransactionMessageProps) {
   );
 }
 
-
 export interface InvoiceBarProps {
   text: string;
-  type: 'invoice' | 'paymentLink';
+  type: "invoice" | "paymentLink";
   url: string;
   invoiceId: string;
 }
@@ -334,28 +355,27 @@ export function InvoicesAndPaymentBar({
     setIsModalOpen2(null);
   };
 
-  const isPaymentLink = type === 'paymentLink';
-  const backgroundColor = isPaymentLink ? 'bg-[#2B3993]' : 'bg-[#464D67]';
+  const isPaymentLink = type === "paymentLink";
+  const backgroundColor = isPaymentLink ? "bg-[#2B3993]" : "bg-[#464D67]";
   const iconSrc = isPaymentLink
-    ? '/assets/icons/captive_portal.svg'
-    : '/assets/icons/book.svg';
-  const iconAlt = isPaymentLink
-    ? 'paymentLink_icon'
-    : 'invoice_icon';
+    ? "/assets/icons/captive_portal.svg"
+    : "/assets/icons/book.svg";
+  const iconAlt = isPaymentLink ? "paymentLink_icon" : "invoice_icon";
 
   const handleToggleBox = () => {
     setShowBox(!showBox);
   };
 
   const handleCopyUrl = (url: string) => {
-    navigator.clipboard.writeText(url)
+    navigator.clipboard
+      .writeText(url)
       .then(() => setCopyMessage("Copied!"))
-      .catch(err => console.error("Failed to copy URL: ", err));
+      .catch((err) => console.error("Failed to copy URL: ", err));
   };
 
   const handleEdit = (invoiceId: string) => {
     // Implement your edit logic here
-    setId(invoiceId)
+    setId(invoiceId);
     if (type === "invoice") {
       handleOpenModal2();
     } else {
@@ -371,12 +391,7 @@ export function InvoicesAndPaymentBar({
           className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}
           onClick={handleToggleBox}
         >
-          <Image
-            src={iconSrc}
-            alt={iconAlt}
-            height={25}
-            width={25}
-          />
+          <Image src={iconSrc} alt={iconAlt} height={25} width={25} />
           <p className="transaction-text">{text}</p>
         </div>
         {showBox && (
