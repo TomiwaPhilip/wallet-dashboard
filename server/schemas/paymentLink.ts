@@ -16,7 +16,6 @@ interface PaymentLink extends Document {
   receiverUser: mongoose.Types.ObjectId;
   payerUser?: mongoose.Types.ObjectId[]; // Optional array of ObjectIds
   createdAt: Date;
-  status: string;
 }
 
 // Define the schema
@@ -42,18 +41,13 @@ const PaymentLinkSchema: Schema = new Schema(
       { type: mongoose.Types.ObjectId, ref: "User", required: false },
     ],
     createdAt: { type: Date, default: Date.now },
-    status: {
-      type: String,
-      required: true,
-      enum: ["pending", "paid", "expired"],
-      default: "pending",
-    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-
 // Check if the model already exists before compiling it
-const PaymentLinkModel = mongoose.models.PaymentLink || mongoose.model<PaymentLink>("PaymentLink", PaymentLinkSchema);
+const PaymentLinkModel =
+  mongoose.models.PaymentLink ||
+  mongoose.model<PaymentLink>("PaymentLink", PaymentLinkSchema);
 
 export default PaymentLinkModel;

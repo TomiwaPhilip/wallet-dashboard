@@ -7,7 +7,5 @@ interface InvoicePageProps {
 }
 
 export default function Page({ params }: InvoicePageProps) {
-  return (
-    <InvoicePage invoiceId={params.invoiceId} customerEmail="example@shit.com" amountDue="10" status="Due" />
-  );
+  return <InvoicePage invoiceId={params.invoiceId} />;
 }
