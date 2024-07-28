@@ -74,9 +74,11 @@ export default function PaymentLink({ paymentLinkId }: Props) {
       }
     }
 
-    // Validate customerInfo
-    if (!data.customerInfo) {
-      newErrors.customerInfo = "Customer info is required!";
+    if (paymentDetails?.customerInfo === "yes") {
+      // Validate customerInfo
+      if (!data.customerInfo) {
+        newErrors.customerInfo = "Customer info is required!";
+      }
     }
 
     return newErrors;
@@ -173,10 +175,14 @@ export default function PaymentLink({ paymentLinkId }: Props) {
 
   return (
     <>
-      <div className="">
+      <div
+        className={`${paymentDetails?.backgroundColor || "bg-[#0A0C13]"} ${
+          paymentDetails?.textColor || "text-white`"
+        }`}
+      >
         <div className="">
           <Image
-            src={"/assets/images/bg.png"}
+            src={paymentDetails?.bannerImage || "/assets/images/bg.png"}
             alt="banner"
             width={100}
             height={100}
@@ -187,7 +193,9 @@ export default function PaymentLink({ paymentLinkId }: Props) {
           <div className="flex items-center justify-center gap-5 mb-[5rem]">
             <div className="">
               <Image
-                src={"/assets/images/profilepic.png"}
+                src={
+                  paymentDetails?.logoImage || "/assets/images/profilepic.png"
+                }
                 alt="banner"
                 width={50}
                 height={50}
@@ -233,6 +241,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
                       onclick={() => setIsModalOpen(true)}
                       loading={loading}
                       disabled={disable}
+                      btnColor={paymentDetails?.buttonColor}
                     />
                   </div>
                 </>

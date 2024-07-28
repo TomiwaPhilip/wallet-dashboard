@@ -31,17 +31,21 @@ export function NoOutlineButtonBig({
   disabled,
   loading,
   onclick,
+  btnColor,
 }: {
   name: string;
   type: "submit" | "button";
   disabled?: boolean;
   loading?: boolean;
   onclick?: () => void;
+  btnColor?: string;
 }) {
   return (
     <button
       type={type}
-      className="mt-5 w-full bg-[#263382] rounded-lg py-4 flex items-center justify-center text-center"
+      className={`mt-5 w-full ${
+        btnColor || "bg-[#263382]"
+      } rounded-lg py-4 flex items-center justify-center text-center`}
       disabled={disabled}
       onClick={onclick}
     >
@@ -142,4 +146,3 @@ export function NoOutlineButtonIcon({
     </button>
   );
 }
-

@@ -285,50 +285,7 @@ const PaymentLink: React.FC = () => {
 
         {/* Live Preview Component */}
         <div className="w-1/2 p-4 bg-[#1a1c22] rounded-xl">
-          <h2 className="text-[24px] font-semibold text-white">Live Preview</h2>
-          <div className="mt-4 text-white">
-            <p>
-              <strong>Amount:</strong> {formData.amount}
-            </p>
-            <p>
-              <strong>Title:</strong> {formData.title}
-            </p>
-            <p>
-              <strong>Description:</strong> {formData.description}
-            </p>
-            <p>
-              <strong>Redirect URL:</strong> {formData.redirectUrl}
-            </p>
-            <p>
-              <strong>Customer Info:</strong> {formData.customerInfo}
-            </p>
-            {showCustomization && (
-              <div>
-                {formData.bannerImage && (
-                  <p>
-                    <strong>Banner Image:</strong> {formData.bannerImage}
-                  </p>
-                )}
-                {formData.logoImage && (
-                  <p>
-                    <strong>Logo Image:</strong> {formData.logoImage}
-                  </p>
-                )}
-                <p>
-                  <strong>Background Color:</strong> {formData.backgroundColor}
-                </p>
-                <p>
-                  <strong>Foreground Color:</strong> {formData.foregroundColor}
-                </p>
-                <p>
-                  <strong>Text Color:</strong> {formData.textColor}
-                </p>
-                <p>
-                  <strong>Button Color:</strong> {formData.buttonColor}
-                </p>
-              </div>
-            )}
-          </div>
+          <PaymentPageComp />
         </div>
       </div>
     </div>
