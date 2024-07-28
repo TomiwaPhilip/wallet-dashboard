@@ -31,14 +31,11 @@ export async function middleware(request: NextRequest) {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    //   let callbackUrl = nextUrl.pathname;
-    //   if (nextUrl.search) {
-    //     callbackUrl += nextUrl.search;
-    //   }
+    let callbackUrl = nextUrl.pathname;
 
-    //   const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-
-    return Response.redirect(new URL("/auth/signin", nextUrl));
+    return Response.redirect(
+      new URL(`/auth/signin?callbackUrl=${callbackUrl}`, nextUrl)
+    );
   }
 
   return null;

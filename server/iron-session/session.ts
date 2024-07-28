@@ -11,11 +11,13 @@ export interface SessionData {
   walletBalance?: string;
   isOnboarded?: boolean;
   isVerified?: boolean;
+  callbackUrl?: string | null;
   isLoggedIn: boolean;
 }
 
 export const defaultSession: SessionData = {
   isLoggedIn: false,
+  callbackUrl: null,
 };
 
 export const sessionOptions: SessionOptions = {

@@ -10,9 +10,10 @@ import connectToDB from "../../model/database";
 import User from "../../schemas/user";
 import getSession from "../server-hooks/getsession.action";
 import { getGoogleAuthUrl } from "@/server/actions/server-hooks/google-auth.action";
-import { redirect } from "next/navigation";
+import { permanentRedirect, redirect } from "next/navigation";
 import Wallet from "../../schemas/wallet";
 import { createWallet } from "../wallet/wallet.action";
+import { NextResponse } from "next/server";
 
 export async function signIn(email: string) {
   console.log("I want to send emails");
@@ -93,6 +94,14 @@ export async function verifyUserTokenAndLogin(code: string) {
 
         await VerificationToken.findOneAndDelete({ token: code });
 
+        const session = await getSession();
+
+        if (session.callbackUrl != null) {
+          const callbackUrl = session.callbackUrl;
+
+          return { newUser: false, callbackUrl: callbackUrl };
+        }
+
         return { newUser: false };
       } else {
         console.log("Creating new user");
@@ -136,7 +145,6 @@ export async function verifyUserTokenAndLogin(code: string) {
   }
 }
 
-
 export async function getMnemonic() {
   await connectToDB();
 
@@ -147,7 +155,7 @@ export async function getMnemonic() {
     // Fetch only the deletedKeyPart field for the user
     const wallet = await Wallet.findOne(
       { user: userId },
-      { deletedKeyPart: 1 },
+      { deletedKeyPart: 1 }
     );
 
     console.log(userId);
@@ -164,7 +172,7 @@ export async function getMnemonic() {
     // Clear the secret key from the database
     await Wallet.updateOne(
       { user: userId },
-      { $unset: { deletedKeyPart: "" } },
+      { $unset: { deletedKeyPart: "" } }
     );
 
     return { secretKey: secretKey };

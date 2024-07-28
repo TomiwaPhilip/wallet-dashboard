@@ -9,7 +9,7 @@ import { NoOutlineButtonBig } from "@/components/shared/buttons";
 export default function VerifyPage() {
   const searchParams = useSearchParams();
   const [verifyResult, setVerifyResult] = useState(
-    "Enter the code sent to your email below",
+    "Enter the code sent to your email below"
   );
   const [loading, setLoading] = useState(false);
   const [codes, setCodes] = useState(Array(5).fill(""));
@@ -21,10 +21,10 @@ export default function VerifyPage() {
       if (result.newUser !== undefined) {
         setVerifyResult("You're verified");
 
-        if (result.newUser) {
+        if (result.newUser === true) {
           window.location.href = "/auth/secret";
-        } else {
-          window.location.href = "/";
+        } else if (result.callbackUrl) {
+          window.location.href = result.callbackUrl;
         }
       } else if (result.error) {
         setVerifyResult(result.error);
@@ -38,7 +38,10 @@ export default function VerifyPage() {
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const value = e.target.value;
     if (/^\d*$/.test(value) && value.length <= 1) {
       const newCodes = [...codes];
@@ -48,7 +51,7 @@ export default function VerifyPage() {
   };
 
   const handleSubmit = () => {
-    if (codes.every(code => code !== "")) {
+    if (codes.every((code) => code !== "")) {
       const fullCode = codes.join("");
       console.log("Submitted code:", fullCode);
       handleVerify(fullCode);
@@ -70,13 +73,18 @@ export default function VerifyPage() {
             value={code}
             onChange={(e) => handleInputChange(e, index)}
             className="w-12 h-12 text-center text-xl border border-[#E0E0E0] rounded-lg bg-[#1B1F2E] text-white"
-            style={{ flex: 1, margin: '0 5px' }}
+            style={{ flex: 1, margin: "0 5px" }}
           />
         ))}
       </div>
 
       <span onClick={handleSubmit}>
-        <NoOutlineButtonBig type="button" name="Verify Me" disabled={loading} loading={loading} />
+        <NoOutlineButtonBig
+          type="button"
+          name="Verify Me"
+          disabled={loading}
+          loading={loading}
+        />
       </span>
     </main>
   );

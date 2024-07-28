@@ -32,3 +32,12 @@ export const getSession2 = async () => {
 
   return plainSession;
 };
+
+export async function editCallbackUrl(callbackUrl: string) {
+  const session = await getSession();
+  session.callbackUrl = callbackUrl;
+
+  await session.save();
+
+  console.log(session);
+}
