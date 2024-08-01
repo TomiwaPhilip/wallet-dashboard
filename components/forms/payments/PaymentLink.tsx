@@ -2,7 +2,7 @@ import {
   NoOutlineButtonBig,
   NoOutlineButtonIcon,
 } from "@/components/shared/buttons";
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import PaymentPageComp from "./PaymentPageComp";
 import { createOrUpdatePaymentLink, getPaymentDetailsById, PaymentDetails, PaymentLinkFormDetails } from "@/server/actions/payments/paymentlink.action";
 import Modal from "@/components/shared/Modal";
@@ -54,27 +54,35 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
   const [btnName, setBtnName] = useState("Create Payment Link");
   const [paymentLink, setPaymentLink] = useState("");
   const [imageState, setImageState] = useState('Upload');
+  const [imageState2, setImageState2] = useState('Upload');
 
   // Function to handle modal close
   const handleCloseModal = () => {
     setIsModalOpen(null);
   };
 
-  const inputFileRef = useRef<HTMLInputElement>(null);
-
   const handleImageChange = async (e: ChangeEvent<HTMLInputElement>, logo: boolean) => {
     e.preventDefault();
-  
+
     setLoading(true);
-    setImageState('Uploading');
-  
+
+    if (logo) {
+      setImageState('Uploading');
+    } else {
+      setImageState2('Uploading');
+    }
+
     const file = e.target.files?.[0];
     if (!file) {
       setLoading(false);
-      setImageState('No file selected');
+      if (logo) {
+        setImageState('No file selected');
+      } else {
+        setImageState2('No file selected');
+      }
       return;
     }
-  
+
     const fileReader = new FileReader();
     fileReader.onload = async (e) => {
       const fileData = e.target?.result;
@@ -85,26 +93,34 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
             handleUploadUrl: "/api/avatar/upload",
           });
           if (newBlob.url) {
-            
+
             if (logo) {
               setFormData({ ...formData, ['logoImage']: newBlob.url });
             } else {
               setFormData({ ...formData, ['bannerImage']: newBlob.url });
             }
-  
+
             setLoading(false);
-            setImageState('Uploaded');
+            if (logo) {
+              setImageState('Successfully Uploaded');
+            } else {
+              setImageState2('Successfully Uploaded');
+            }
           }
         } catch (error) {
           setLoading(false);
-          setImageState('Error uploading');
+          if (logo) {
+            setImageState('Error Uploading');
+          } else {
+            setImageState2('Error Uploading');
+          }
           console.error("Error uploading file:", error);
         }
       }
     };
     fileReader.readAsDataURL(file);
   };
-  
+
 
   // Fetch invoice details if id is provided
   useEffect(() => {
@@ -345,7 +361,7 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
                       htmlFor="bannerUpload"
                       className="block text-sm font-bold text-[#3344A8] cursor-pointer"
                     >
-                      {imageState} a banner
+                      {imageState2} a banner
                     </label>
                     <input
                       type="file"
