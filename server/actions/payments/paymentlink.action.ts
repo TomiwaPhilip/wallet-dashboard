@@ -46,17 +46,17 @@ export async function createOrUpdatePaymentLink(
       );
 
       if (!existingPaymentLink) {
-        throw new Error("Payment link not found");
+        return { error: "Payment link not found" };
       }
 
       if (existingPaymentLink.receiverUser.toString() !== session.userId) {
-        throw new Error("Unauthorized to update this payment link");
+        return { error: "Unauthorized to update this payment link" };
       }
 
       Object.assign(existingPaymentLink, updateParams);
       await existingPaymentLink.save();
 
-      return { message: "Payment link updated successfully!" };
+      return { message: "Payment link updated successfully!", paymentLink: `https://mileston.co/payment/${existingPaymentLink._id}` };
     } else {
       // Create new payment link
       const newPaymentLink = new PaymentLinkModel({
@@ -68,11 +68,11 @@ export async function createOrUpdatePaymentLink(
 
       await newPaymentLink.save();
 
-      return { message: "Payment link created successfully!" };
+      return { message: "Payment link created successfully!", paymentLink: `https://mileston.co/payment/${newPaymentLink._id}` };
     }
   } catch (error: any) {
     console.error("Error creating or updating payment link:", error.message);
-    throw new Error("Failed to create or update payment link");
+    return { error: "Failed to create or update payment link" };
   }
 }
 

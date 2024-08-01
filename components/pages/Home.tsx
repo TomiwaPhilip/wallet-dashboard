@@ -14,6 +14,7 @@ import ExternalSend from "../forms/transactions/ExternalSend";
 import { RiLoader4Line } from "react-icons/ri";
 import TransactionHistory from "../shared/TransactionHistory";
 import Receive from "../forms/transactions/Receive";
+import { useSession } from "../shared/session";
 
 export default function HomePage() {
 
@@ -25,6 +26,9 @@ export default function HomePage() {
   if (!isLoading) {
     console.log(data);
   }
+
+  const session = useSession();
+  const walletAddress = session?.solanaAddress || '';
 
   const [activeTab, setActiveTab] = useState<"account" | "payment">("account");
 
@@ -140,7 +144,7 @@ export default function HomePage() {
         </div>
       </div>
       <Modal isOpen={isModalOpen3} onClose={handleCloseModal}>
-        <Receive />
+        <Receive value={walletAddress} caption="Receive USDC on Solana Network" />
       </Modal>
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <MilestonSend />

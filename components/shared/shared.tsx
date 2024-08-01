@@ -411,7 +411,7 @@ export function InvoicesAndPaymentBar({
         )}
       </div>
       <FullModal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <PaymentLink />
+        <PaymentLink id={id} />
       </FullModal>
       <FullModal isOpen={isModalOpen2} onClose={handleCloseModal2}>
         <InvoicePayment id={id} />

@@ -2,12 +2,13 @@ import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import QrCodeGenerator from "./QRcodeGenerator";
 import { useSession } from "@/components/shared/session";
 import { useRef, useState } from "react";
+import { Props } from "./QRcodeGenerator";
 
+interface QRProps extends Props {
+    caption: string;
+}
 
-const Receive: React.FC = () => {
-
-    const session = useSession();
-    const walletAddress = session?.solanaAddress || '';
+const Receive: React.FC<QRProps> = ({caption, value}: QRProps) => {
 
     const [copy, setCopy] = useState('/assets/icons/content_copy.svg');
     const secretRef = useRef<HTMLParagraphElement>(null);
@@ -35,16 +36,16 @@ const Receive: React.FC = () => {
     return (
         <>
             <p className="text-center font-bold text-[24px] mb-4">
-                Receive USDC on Solana Network
+                {caption}
             </p>
             <div className="">
-                <QrCodeGenerator />
-                <p className="text-center text-[16px] font-bold my-2">Scan QR Code to Copy Wallet Address</p>
+                <QrCodeGenerator value={value} />
+                <p className="text-center text-[16px] font-bold my-2">Scan QR Code to Copy</p>
             </div>
-            <p ref={secretRef} className="hidden">{walletAddress}</p>
+            <p ref={secretRef} className="hidden">{value}</p>
             <div className="flex items-center justify-center mt-6">
                 <NoOutlineButtonIcon
-                    name={walletAddress}
+                    name={value}
                     type="submit"
                     iconSrc={copy}
                     buttonClassName="w-full text-sm"

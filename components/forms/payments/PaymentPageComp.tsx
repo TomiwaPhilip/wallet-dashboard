@@ -17,7 +17,7 @@ export default function PaymentPageComp(params: PaymentLinkFormDetails) {
   } = params || {};
 
   // Function to validate hex color and provide a fallback if invalid
-  const validateHexColor = (color) => {
+  const validateHexColor = (color: any) => {
     const hexColorRegex = /^#[0-9A-F]{6}$/i;
     return hexColorRegex.test(color) ? color : null;
   };
@@ -42,27 +42,27 @@ export default function PaymentPageComp(params: PaymentLinkFormDetails) {
         />
       </div>
       <div>
-        <div className="flex items-center justify-center gap-5 mb-[5rem]">
-          <div>
+        <div className="grid grid-cols-10 gap-5 mb-[1rem] p-6">
+          <div className="col-span-2 flex items-center">
             <Image
               src={logoImage || "/assets/images/profilepic.png"}
               alt="logo"
-              width={50}
-              height={50}
-              className="rounded-full border-8 border-[#23283A]"
+              width={100}
+              height={100}
+              className="w-full rounded-full border-8 border-[#23283A]"
             />
           </div>
-          <div>
-            <h2 className="font-bold text-[36px]">{title}</h2>
+          <div className="col-span-8">
+            <h2 className="font-bold text-[24px]">{title}</h2>
             <p className="text-[16px]">{description}</p>
           </div>
         </div>
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center p-6">
           <Card2 bgColor={validatedForegroundColor}>
-            <p className="font-bold text-[36px] text-center">
+            <p className="font-bold text-[24px] text-center">
               Pay with Mileston
             </p>
-            <div className="mt-10 text-[32px] font-bold w-full flex justify-between items-center">
+            <div className="mt-10 text-[20px] font-bold w-full flex justify-between items-center">
               <p>Amount to Pay:</p>
               <div className="flex items-center">
                 <p>{amount}</p>

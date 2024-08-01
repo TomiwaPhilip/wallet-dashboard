@@ -233,7 +233,7 @@ export default function InvoicePayment({ id }: InvoicePaymentProps) {
                         </div>
 
                         <div className="w-full md:w-1/2 px-3">
-                            <label className="block text-sm font-medium">Customer's Email</label>
+                            <label className="block text-sm font-medium">Customer&apos;s Email</label>
                             <input
                                 type="email"
                                 name="email"
