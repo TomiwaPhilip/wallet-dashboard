@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { NoOutlineButtonBig } from "../shared/buttons";
 import { Card2 } from "../shared/shared";
@@ -10,6 +12,7 @@ import {
   getPaymentDetailsById,
   payUser,
 } from "@/server/actions/payments/paymentlink.action";
+import { useRouter } from "next/navigation";
 
 interface FormData {
   secretPhrase: string;
@@ -29,7 +32,8 @@ type ResponseData = PaymentLinkFormDetails | PaymentDetails | ErrorResponse;
 function isPaymentDetails(data: ResponseData): data is PaymentDetails {
   return (
     (data as PaymentDetails).amount !== undefined &&
-    (data as PaymentDetails).receiverUserEmail !== undefined
+    (data as PaymentDetails).receiverUserEmail !== undefined &&
+    (data as PaymentDetails).identifier !== undefined
   );
 }
 
@@ -55,6 +59,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
   const [disable, setDisable] = useState(false);
   const [response, setResponse] = useState(false);
   const session = useSession();
+  const router = useRouter();
 
   // Function to handle modal close
   const handleCloseModal = () => {
@@ -96,16 +101,21 @@ export default function PaymentLink({ paymentLinkId }: Props) {
   useEffect(() => {
     const fetchPaymentData = async () => {
       try {
-        const data = await getPaymentDetailsById(paymentLinkId);
-
+        const data = await getPaymentDetailsById(paymentLinkId, true);
+        console.log("Fetched Data:", data);
+  
         if (isErrorResponse(data)) {
           setError(true);
           setMessage(data.error);
         } else if (isPaymentDetails(data)) {
           setPaymentDetails(data);
-          if (session?.email === paymentDetails?.receiverUserEmail) {
-            setDisable(true);
+          console.log("Payment Details:", data);
+  
+          if (session?.email === data?.receiverUserEmail) {
+            // setDisable(true);
           }
+        } else {
+          console.warn("Data does not match PaymentDetails structure", data);
         }
       } catch (error) {
         console.error("Failed to fetch payment details:", error);
@@ -113,11 +123,12 @@ export default function PaymentLink({ paymentLinkId }: Props) {
         setMessage("Failed to fetch payment details.");
       }
     };
-
+  
     if (paymentLinkId) {
       fetchPaymentData();
     }
-  }, [paymentLinkId]);
+  }, [paymentLinkId, session]);
+  
 
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -152,6 +163,8 @@ export default function PaymentLink({ paymentLinkId }: Props) {
           setDisable(false);
           setResponse(true);
           setMessage(response.message);
+          if(paymentDetails?.redirectUrl)
+          router.push(paymentDetails?.redirectUrl)
         } else if (response != undefined && response.error != undefined) {
           setLoading(false);
           setDisable(false);
@@ -190,25 +203,25 @@ export default function PaymentLink({ paymentLinkId }: Props) {
             className="w-full h-[150px]"
           />
         </div>
-        <div className="">
-          <div className="flex items-center justify-center gap-5 mb-[5rem]">
-            <div className="">
+        <div className="mt-5">
+          <div className="grid grid-cols-10 gap-1 mb-[1.5rem] px-[10rem]">
+            <div className="col-span-2 flex items-center justify-center">
               <Image
                 src={
                   paymentDetails?.logoImage || "/assets/images/profilepic.png"
                 }
-                alt="banner"
-                width={50}
-                height={50}
+                alt="logo"
+                width={100}
+                height={100}
                 className="rounded-full border-8 border-[#23283A]"
               />
             </div>
-            <div className="">
+            <div className="col-span-8">
               <h2 className="font-bold text-[36px]">{paymentDetails?.title}</h2>
               <p className="text-[16px]">{paymentDetails?.description}</p>
             </div>
           </div>
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center px-[15rem]">
             <Card2 bgColor={paymentDetails?.foregroundColor}>
               {message ? (
                 <p
@@ -281,7 +294,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
               name="customerInfo"
               value={formData.customerInfo}
               onChange={handleChange}
-              placeholder="*****"
+              placeholder="Any information"
               className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${
                 errors.secretPhrase ? "border-red-500" : "border-[#979EB8]"
               } rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]`}

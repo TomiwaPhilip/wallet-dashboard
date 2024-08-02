@@ -133,7 +133,7 @@ export async function getPaymentDetailsById(
         foregroundColor: paymentDetails.foregroundColor || "",
         textColor: paymentDetails.textColor || "",
         buttonColor: paymentDetails.buttonColor || "",
-        receiverUser: user.email || "",
+        receiverUserEmail: user.email || "",
         identifier: wallet.solanaPublicKey || "",
       };
     } else {

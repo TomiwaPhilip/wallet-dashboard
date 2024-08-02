@@ -9,7 +9,7 @@ interface PaymentPageProps {
 export default function Page({ params }: PaymentPageProps) {
   return (
     <div>
-      <PaymentLink />
+      <PaymentLink paymentLinkId={params.paymentLinkId} />
     </div>
   );
 }
