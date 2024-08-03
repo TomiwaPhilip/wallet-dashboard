@@ -120,7 +120,7 @@ export async function createOrUpdateInvoice(
       await newInvoice.save();
 
       // Send an email about the new invoice
-      const invoiceUrl = `https://mileston.co/invoice/${newInvoice._id.toString()}`;
+      const invoiceUrl = `https://personal-mileston.vercel.app/invoice/${newInvoice._id.toString()}`;
 
       // Send an email about the updated invoice
       sendInvoiceNotification(customerEmail, session.email, invoiceUrl, "New");
@@ -287,14 +287,14 @@ export async function fetchPaymentLinkAndInvoice(): Promise<InvoiceBarProps[] | 
       const invoiceData = invoiceDocs.map((inv) => ({
         type: "invoice" as const,
         text: `Invoice created on ${new Date(inv.createdAt).toLocaleDateString()}: ID: ${inv._id.toString()}`,
-        url: `https://mileston.co/invoice/${inv._id.toString()}`,
+        url: `https://personal-mileston.vercel.app/invoice/${inv._id.toString()}`,
         invoiceId: inv._id.toString(),
       }));
 
       const paymentData = paymentDocs.map((pay) => ({
         type: "paymentLink" as const,
         text: `Payment Link created on ${new Date(pay.createdAt).toLocaleDateString()}: ID: ${pay._id.toString()}`,
-        url: `https://mileston.co/payment/${pay._id.toString()}`,
+        url: `https://personal-mileston.vercel.app/payment/${pay._id.toString()}`,
         invoiceId: pay._id.toString(),
       }));
 
