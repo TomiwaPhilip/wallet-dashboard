@@ -56,7 +56,7 @@ export async function createOrUpdatePaymentLink(
       Object.assign(existingPaymentLink, updateParams);
       await existingPaymentLink.save();
 
-      return { message: "Payment link updated successfully!", paymentLink: `https://mileston.co/payment/${existingPaymentLink._id}` };
+      return { message: "Payment link updated successfully!", paymentLink: `https://personal-mileston.vercel.app/payment/${existingPaymentLink._id}` };
     } else {
       // Create new payment link
       const newPaymentLink = new PaymentLinkModel({
