@@ -68,7 +68,7 @@ export async function createOrUpdatePaymentLink(
 
       await newPaymentLink.save();
 
-      return { message: "Payment link created successfully!", paymentLink: `https://mileston.co/payment/${newPaymentLink._id}` };
+      return { message: "Payment link created successfully!", paymentLink: `https://personal-mileston.vercel.app/payment/${newPaymentLink._id}` };
     }
   } catch (error: any) {
     console.error("Error creating or updating payment link:", error.message);
