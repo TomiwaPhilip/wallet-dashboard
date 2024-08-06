@@ -176,7 +176,7 @@ export default function InvoicePayment({ id }: InvoicePaymentProps) {
 
     return (
         <>
-            <div className="py-[4rem] px-[6rem]">
+            <div className="py-[1rem] px-[1rem] md:py-[2rem] md:px-[3rem] lg:py-[4rem] lg:px-[6rem]">
                 <h2 className="text-[32px] font-bold">Create an Invoice</h2>
                 <p className="text-[16px] font-medium">
                     Enter the below information to create an invoice

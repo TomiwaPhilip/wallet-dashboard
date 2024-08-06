@@ -34,7 +34,7 @@ export default function SettingsPage() {
   return (
     <div>
       <h2 className="font-bold text-[24px]">Update your Mileston Profile</h2>
-      <div className="flex items-start justify-center gap-5 w-full mt-10">
+      <div className="flex flex-col items-center justify-center gap-5 w-full mt-10 md:flex-row md:items-start">
         <div className="flex-1">
           <Card2>
             <h3 className="font-semibold text-[20px] text-left">

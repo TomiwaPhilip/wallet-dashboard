@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "../../globals.css";
-import { Nav } from "@/components/shared/shared";
+import { MobileNav, Nav } from "@/components/shared/shared";
 
 export const metadata: Metadata = {
   title: "Mileston Wallet Dashboard",
@@ -15,9 +15,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main className="styled-bg h-full min-h-screen text-white py-[4rem] px-[6rem]">
-          <Nav /> 
-          <div className="mt-[4rem]">
+        <main className="styled-bg h-full min-h-screen text-white py-[1rem] px-[1rem] md:py-[2rem] md:px-[3rem] lg:py-[4rem] lg:px-[6rem]">
+          <div className="hidden sm:block">
+            <Nav /> 
+          </div>
+          <MobileNav />
+          <div className="mt-[2rem] md:mt-[3rem] lg:mt-[4rem]">
             {children}
           </div>
         </main>

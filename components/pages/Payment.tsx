@@ -44,14 +44,14 @@ export default function Payment() {
 
   return (
     <>
-      <div className="grid grid-cols-[40%_60%] gap-7">
+      <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-7">
         <div className="">
           <Card2>
             <div className="flex-col items-center justify-center gap-10">
               <h3 className="font-medium text-[20px] mb-[2rem]">
                 Receive Payments
               </h3>
-              <div className="my-[19vh]">
+              <div className="my-[5vh] md:my-[14vh] lg:my-[19vh]">
                 <NoOutlineButtonIcon
                   name="Create a Payment Link"
                   type="button"

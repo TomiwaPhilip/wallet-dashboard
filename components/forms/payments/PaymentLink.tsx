@@ -251,15 +251,15 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
 
   return (
     <>
-      <div className="py-[4rem] px-[6rem]">
+      <div className="py-[1rem] px-[1rem] md:py-[2rem] md:px-[3rem] lg:py-[4rem] lg:px-[6rem]">
         <h2 className="text-[32px] font-bold">Create a Payment Link</h2>
         <p className="text-[16px] font-medium">
           Enter the below information to create a payment link
         </p>
 
-        <div className="flex items-center space-x-10 mt-10">
-          <div className="w-1/2">
-            <form onSubmit={handleSubmit} className="mt-10">
+        <div className="flex flex-col items-start space-x-10 mt-10 lg:flex-row lg:items-center">
+          <div className="w-full lg:w-1/2">
+            <form onSubmit={handleSubmit} className="mt-10 w-full">
               <div className="mb-4">
                 <label className="block text-sm font-medium">Amount</label>
                 <input
@@ -458,22 +458,27 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
           </div>
 
           {/* Divider */}
-          <div className="w-px bg-[#464D67] h-[90vh]"></div>
+          <div className="hidden lg:block">
+            <div className="w-px bg-[#464D67] h-[90vh]"></div>
+          </div>
 
           {/* Live Preview Component */}
-          <div className="w-1/2 p-4 bg-[#B5B5B5] rounded-3xl">
-            <PaymentPageComp
-              amount={formData.amount}
-              title={formData.title}
-              buttonColor={formData.buttonColor}
-              backgroundColor={formData.backgroundColor}
-              textColor={formData.textColor}
-              foregroundColor={formData.foregroundColor}
-              description={formData.description}
-              logoImage={formData.logoImage}
-              bannerImage={formData.bannerImage}
-            />
+          <div className="hidden lg:block">
+            <div className="w-1/2 p-4 bg-[#B5B5B5] rounded-3xl">
+              <PaymentPageComp
+                amount={formData.amount}
+                title={formData.title}
+                buttonColor={formData.buttonColor}
+                backgroundColor={formData.backgroundColor}
+                textColor={formData.textColor}
+                foregroundColor={formData.foregroundColor}
+                description={formData.description}
+                logoImage={formData.logoImage}
+                bannerImage={formData.bannerImage}
+              />
+            </div>
           </div>
+
         </div>
       </div>
       {error === true && (

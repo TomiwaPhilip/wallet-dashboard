@@ -49,9 +49,8 @@ export function Nav() {
       <div className="bg-[#0E1018] p-4 rounded-full border border-[#131621]">
         <ul className="flex items-center gap-10">
           <li
-            className={`gradient-border rounded-full ${
-              pathname === "/" ? "normal-gradient-border" : ""
-            }`}
+            className={`gradient-border rounded-full ${pathname === "/" ? "normal-gradient-border" : ""
+              }`}
           >
             <Link
               href="/"
@@ -69,9 +68,8 @@ export function Nav() {
             </Link>
           </li>
           <li
-            className={`gradient-border rounded-full ${
-              pathname === "/payments" ? "normal-gradient-border" : ""
-            }`}
+            className={`gradient-border rounded-full ${pathname === "/payments" ? "normal-gradient-border" : ""
+              }`}
           >
             <Link
               href="/payments"
@@ -89,9 +87,8 @@ export function Nav() {
             </Link>
           </li>
           <li
-            className={`gradient-border rounded-full ${
-              pathname === "/settings" ? "normal-gradient-border" : ""
-            }`}
+            className={`gradient-border rounded-full ${pathname === "/settings" ? "normal-gradient-border" : ""
+              }`}
           >
             <Link
               href="/settings"
@@ -145,6 +142,144 @@ export function Nav() {
   );
 }
 
+export function MobileNav() {
+  const pathname = usePathname();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const session = useSession();
+
+  // Replace these with actual user data fetching logic
+  let user;
+  if (session?.firstName && session?.lastName && !session?.image) {
+    user = {
+      name: `${session?.firstName} ${session?.lastName}`,
+      profileImage: "/assets/images/profilepic.png",
+    };
+  } else if (!session?.firstName && !session?.lastName && session?.image) {
+    user = {
+      name: "New User",
+      profileImage: `${session?.image}`,
+    };
+  } else if (session?.firstName && session?.lastName && session?.image) {
+    user = {
+      name: `${session?.firstName} ${session?.lastName}`,
+      profileImage: `${session?.image}`,
+    };
+  } else {
+    user = {
+      name: "New User",
+      profileImage: "/assets/images/profilepic.png",
+    };
+  }
+
+  const handleSignOut = async () => {
+    console.log("I am signing out");
+    await signOut();
+  };
+
+  return (
+    <div className="flex justify-between items-center gap-4 p-4 bg-[#0E1018] border-b border-[#131621] rounded-full sm:hidden">
+      <button
+        className="p-2"
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <Image
+          src="/assets/icons/menu_open.svg"
+          alt="menu_icon"
+          height={50}
+          width={50}
+        />
+      </button>
+      <div className="relative bg-[#0E1018] p-4 rounded-full border border-[#131621] flex-shrink-0">
+        <button
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+          className="flex items-center gap-2 bg-[#0E1018] p-2 rounded-full"
+        >
+          <Image
+            src={user.profileImage}
+            alt="profile_image"
+            height={25}
+            width={25}
+            className="rounded-full"
+          />
+          {user.name}
+          <Image
+            src="/assets/icons/chevron_down.svg"
+            alt="chevron_down_icon"
+            height={20}
+            width={20}
+          />
+        </button>
+        {dropdownOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-[#0E1018] rounded-full shadow-lg">
+            <button
+              onClick={() => handleSignOut()}
+              className="block w-full text-left px-4 py-2 text-sm text-white"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+      {menuOpen && (
+        <div className="fixed w-full top-20 left-0 bg-[#0E1018] px-4 py-2 border-t border-[#131621] rounded-2xl lg:hidden" style={{ zIndex: 9999 }}>
+          <ul className="flex items-center justify-center gap-4">
+            <li
+              className={`gradient-border rounded-full ${pathname === "/" ? "normal-gradient-border" : ""}`}
+            >
+              <Link
+                href="/"
+                className="flex items-center gap-2 bg-[#0E1018] rounded-full p-2"
+              >
+                <Image
+                  src="/assets/icons/add_home.svg"
+                  alt="home_icon"
+                  height={25}
+                  width={25}
+                />
+                Home
+              </Link>
+            </li>
+            <li
+              className={`gradient-border rounded-full ${pathname === "/payments" ? "normal-gradient-border" : ""}`}
+            >
+              <Link
+                href="/payments"
+                className="flex items-center gap-2 bg-[#0E1018] p-2 rounded-full"
+              >
+                <Image
+                  src="/assets/icons/monetization_on.svg"
+                  alt="payments_icon"
+                  height={25}
+                  width={25}
+                />
+                Payments
+              </Link>
+            </li>
+            <li
+              className={`gradient-border rounded-full ${pathname === "/settings" ? "normal-gradient-border" : ""}`}
+            >
+              <Link
+                href="/settings"
+                className="flex items-center gap-2 bg-[#0E1018] rounded-full p-2"
+              >
+                <Image
+                  src="/assets/icons/admin_panel_settings.svg"
+                  alt="settings_icon"
+                  height={25}
+                  width={25}
+                />
+                Settings
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+      )}
+    </div>
+  );
+}
+
 interface TabsProps {
   isAccountActive: boolean;
   isPaymentActive: boolean;
@@ -161,9 +296,8 @@ export function Tabs({
       <nav className="bg-[#0E1018] p-4 rounded-full border border-[#131621] w-full">
         <ul className="flex items-center gap-10 w-full">
           <li
-            className={`gradient-border rounded-full ${
-              isAccountActive ? "normal-gradient-border" : ""
-            } flex-1`}
+            className={`gradient-border rounded-full ${isAccountActive ? "normal-gradient-border" : ""
+              } flex-1`}
           >
             <div
               onClick={() => onTabChange("account")}
@@ -179,9 +313,8 @@ export function Tabs({
             </div>
           </li>
           <li
-            className={`gradient-border rounded-full ${
-              isPaymentActive ? "normal-gradient-border" : ""
-            } flex-1`}
+            className={`gradient-border rounded-full ${isPaymentActive ? "normal-gradient-border" : ""
+              } flex-1`}
           >
             <div
               onClick={() => onTabChange("payment")}
@@ -253,11 +386,9 @@ export const StatusMessage: React.FC<StatusMessageProps> = ({
 
   return (
     <div
-      className={`fixed top-5 right-5 p-3 rounded-md text-white flex items-center ${
-        type === "error" ? "bg-[#E40686]" : "bg-[#5EE398]"
-      } ${
-        isVisible ? "opacity-100" : "opacity-0"
-      } transition-opacity duration-300`}
+      className={`fixed top-5 right-5 p-3 rounded-md text-white flex items-center ${type === "error" ? "bg-[#E40686]" : "bg-[#5EE398]"
+        } ${isVisible ? "opacity-100" : "opacity-0"
+        } transition-opacity duration-300`}
     >
       <div className="flex-shrink-0 mr-3">
         <Image src={iconSrc} alt="Icon" width={24} height={24} />
@@ -282,7 +413,7 @@ export function TransactionBar({ text, type }: TransactionBarProps) {
 
   return (
     <div
-      className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}
+      className={`w-full flex items-start justify-start font-semibold text-[12px] md:text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}
     >
       <Image src={iconSrc} alt={iconAlt} height={25} width={25} />
       <p className="transaction-text">{text}</p>
@@ -385,9 +516,9 @@ export function InvoicesAndPaymentBar({
 
   return (
     <>
-      <div className="relative pointer">
+      <div className="relative cursor-pointer">
         <div
-          className={`w-full flex items-start justify-start font-semibold text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}
+          className={`w-full flex items-start justify-start font-semibold text-[12px] md:text-[16px] p-2 rounded-lg gap-3 mb-5 ${backgroundColor}`}
           onClick={handleToggleBox}
         >
           <Image src={iconSrc} alt={iconAlt} height={25} width={25} />

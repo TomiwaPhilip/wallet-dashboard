@@ -78,7 +78,7 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="grid grid-cols-[40%_60%] gap-7">
+      <div className="grid grid-cols-1 md:grid-cols-[40%_60%] gap-7">
         <div className="">
           <div className="w-full block mb-7">
             <Tabs
