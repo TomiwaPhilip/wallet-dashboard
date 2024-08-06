@@ -94,7 +94,7 @@ export async function createOrUpdateInvoice(
       });
       await existingInvoice.save();
 
-      const invoiceUrl = `https://mileston.co/invoice/${existingInvoice._id.toString()}`;
+      const invoiceUrl = `https://personal-mileston.vercel.app/invoice/${existingInvoice._id.toString()}`;
 
       // Send an email about the updated invoice
       sendInvoiceNotification(
