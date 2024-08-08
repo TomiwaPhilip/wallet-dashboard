@@ -112,7 +112,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
           console.log("Payment Details:", data);
   
           if (session?.email === data?.receiverUserEmail) {
-            // setDisable(true);
+            setDisable(true);
           }
         } else {
           console.warn("Data does not match PaymentDetails structure", data);
