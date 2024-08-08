@@ -464,7 +464,7 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
 
           {/* Live Preview Component */}
           <div className="hidden lg:block">
-            <div className="w-1/2 p-4 bg-[#B5B5B5] rounded-3xl">
+            <div className="w-full p-4 bg-[#B5B5B5] rounded-3xl">
               <PaymentPageComp
                 amount={formData.amount}
                 title={formData.title}
