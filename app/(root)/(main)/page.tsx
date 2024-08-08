@@ -7,9 +7,9 @@ export default async function Home() {
   const session = await getSession();
   console.log(session);
 
-  // if(session.isOnboarded != true) {
-  //   redirect("/settings")
-  // }
+  if(session.isSecretCopied != true) {
+    redirect("/auth/secret")
+  }
   
   return (
     <main className="">

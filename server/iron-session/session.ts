@@ -12,12 +12,14 @@ export interface SessionData {
   isOnboarded?: boolean;
   isVerified?: boolean;
   callbackUrl?: string | null;
+  isSecretCopied?: boolean;
   isLoggedIn: boolean;
 }
 
 export const defaultSession: SessionData = {
   isLoggedIn: false,
   callbackUrl: null,
+  isSecretCopied: false,
 };
 
 export const sessionOptions: SessionOptions = {

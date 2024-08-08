@@ -28,6 +28,10 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  isSecretCopied: {
+    type: Boolean,
+    default: false,
+  },
   loginType: {
     type: String,
     enum: ["email", "google", "linkedin"],

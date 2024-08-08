@@ -87,6 +87,7 @@ export async function verifyUserTokenAndLogin(code: string) {
           solanaAddress: existingWallet.solanaPublicKey,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
+          isSecretCopied: existingUser.isSecretCopied,
           isLoggedIn: true,
         };
 
@@ -126,6 +127,7 @@ export async function verifyUserTokenAndLogin(code: string) {
           solanaAddress: newWallet.solanaAddress,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
+          isSecretCopied: newUser.isSecretCopied,
           isLoggedIn: true,
         };
 
@@ -169,11 +171,11 @@ export async function getMnemonic() {
     // Extract the secret key (deletedKeyPart)
     const secretKey = wallet.deletedKeyPart;
 
-    // Clear the secret key from the database
-    await Wallet.updateOne(
-      { user: userId },
-      { $unset: { deletedKeyPart: "" } }
-    );
+    // // Clear the secret key from the database
+    // await Wallet.updateOne(
+    //   { user: userId },
+    //   { $unset: { deletedKeyPart: "" } }
+    // );
 
     return { secretKey: secretKey };
   } catch (error) {
@@ -181,6 +183,37 @@ export async function getMnemonic() {
     return {
       error: "Error retrieving or clearing mnemonic. Please try again.",
     };
+  }
+}
+
+export async function deleteMnemonic() {
+  try {
+    await connectToDB();
+
+    const session = await getSession();
+    const userId = session.userId;
+
+    // Clear the secret key from the database
+    await Wallet.updateOne(
+      { user: userId },
+      { $unset: { deletedKeyPart: "" } }
+    );
+
+    // Update the user document to mark the secret as copied
+    const user = await User.findByIdAndUpdate(userId, {
+      isSecretCopied: true,
+    }, { new: true });  // Return the updated document
+    console.log("Updated User:", user);  // Log the updated user document
+    
+
+    // Update the session to reflect the change
+    session.isSecretCopied = true;
+    await session.save();
+
+    return { message: true };
+  } catch (error: any) {
+    console.error("Error in deleteMnemonic:", error);
+    return { message: false, error: error.message };
   }
 }
 

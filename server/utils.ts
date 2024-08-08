@@ -90,6 +90,7 @@ export async function saveSession(session: SessionData): Promise<void> {
   existingSession.solanaAddress = session.solanaAddress;
   existingSession.isOnboarded = session.isOnboarded;
   existingSession.isVerified = session.isVerified;
+  existingSession.isSecretCopied = session.isSecretCopied;
   existingSession.isLoggedIn = session.isLoggedIn;
 
   // Save the session
