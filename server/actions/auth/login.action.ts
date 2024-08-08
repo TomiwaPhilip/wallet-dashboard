@@ -202,8 +202,7 @@ export async function deleteMnemonic() {
     // Update the user document to mark the secret as copied
     const user = await User.findByIdAndUpdate(userId, {
       isSecretCopied: true,
-    }, { new: true });  // Return the updated document
-    console.log("Updated User:", user);  // Log the updated user document
+    });
     
 
     // Update the session to reflect the change

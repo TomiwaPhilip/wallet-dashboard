@@ -35,7 +35,7 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
     title: "Title",
     description: "Description",
     redirectUrl: "", // Initialize as empty string or undefined based on your logic
-    customerInfo: "yes",
+    customerInfo: "nil",
     bannerImage: "", // Initialize optional fields as empty string or undefined
     logoImage: "",
     backgroundColor: "#0A0C13",
@@ -332,7 +332,7 @@ const PaymentLink: React.FC<PaymentLinkProps> = ({ id }: PaymentLinkProps) => {
                   Any other information from customer?
                 </label>
                 <select
-                  name="customerInfodcNetwork"
+                  name="customerInfo"
                   value={formData.customerInfo}
                   onChange={handleChange}
                   className={`mt-1 block w-full px-3 py-2 bg-[#131621] border-[#979EB8] rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]`}
