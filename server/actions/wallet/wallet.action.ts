@@ -86,13 +86,13 @@ export async function createWallet(userObject: any) {
     // Generate Wallet
     const wallet = await mnemonicToKeypairForGeneration();
 
-    console.log(wallet);
+    // console.log(wallet);
 
     const publicKey = wallet.publicKey;
 
     const signature = await transferSOLForRentFee(publicKey);
 
-    console.log(signature.signature);
+    // console.log(signature.signature);
 
     // Connect to Database
     await connectToDB()
@@ -107,7 +107,7 @@ export async function createWallet(userObject: any) {
 
         const usdcAccount = await createUSDCAccount(publicKey, wallet.keypair);
 
-        console.log(usdcAccount);
+        // console.log(usdcAccount);
 
         if (usdcAccount.usdcAccount) {
 
@@ -119,7 +119,7 @@ export async function createWallet(userObject: any) {
                 usdcAddress: usdcAccount.usdcAccount,
             })
 
-            if(newWallet) console.log(newWallet);
+            // if(newWallet) console.log(newWallet);
 
             return {
                 balance: newWallet.balance,
