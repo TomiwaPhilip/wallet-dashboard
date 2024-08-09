@@ -32,15 +32,16 @@ export async function transferSOLForRentFee(receiver: string) {
 
     try {
 
-        // Get the minimum balance required for rent exemption
-        const minBalanceForRentExemption = await connection.getMinimumBalanceForRentExemption(0);
+        // Get the minimum balance required for rent exemption (already in lamports)
+        // const minBalanceForRentExemption = await connection.getMinimumBalanceForRentExemption(200);
+        // console.log("minBalanceForRentExemption", minBalanceForRentExemption)
 
         // Create a transaction to transfer the minimum rent exemption amount
         const transaction = new Transaction().add(
             SystemProgram.transfer({
                 fromPubkey: sender.publicKey,
                 toPubkey: receiverPublicKey,
-                lamports: 0.1 * LAMPORTS_PER_SOL
+                lamports: 0.003 * LAMPORTS_PER_SOL
             })
         );
 
@@ -58,6 +59,7 @@ export async function transferSOLForRentFee(receiver: string) {
     }
 
 }
+
 
 
 export async function createUSDCAccount(receiverKey: string, sender: Keypair) {

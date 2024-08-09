@@ -68,7 +68,7 @@ export async function createOrUpdateInvoice(
     const payerUser = await User.findOne({ email: customerEmail });
 
     if (!payerUser) {
-      return { error: "Customer is not on Mileston" };
+      return { error: "Customer is not on Mileston." };
     }
 
     // Calculate the status based on the due date
@@ -94,10 +94,10 @@ export async function createOrUpdateInvoice(
       });
       await existingInvoice.save();
 
-      const invoiceUrl = `https://personal-mileston.vercel.app/invoice/${existingInvoice._id.toString()}`;
+      const invoiceUrl = `https://personal.mileston.co/invoice/${existingInvoice._id.toString()}`;
 
       // Send an email about the updated invoice
-      sendInvoiceNotification(
+      await sendInvoiceNotification(
         customerEmail,
         session.email,
         invoiceUrl,
@@ -120,10 +120,10 @@ export async function createOrUpdateInvoice(
       await newInvoice.save();
 
       // Send an email about the new invoice
-      const invoiceUrl = `https://personal-mileston.vercel.app/invoice/${newInvoice._id.toString()}`;
+      const invoiceUrl = `https://personal.mileston.co/invoice/${newInvoice._id.toString()}`;
 
       // Send an email about the updated invoice
-      sendInvoiceNotification(customerEmail, session.email, invoiceUrl, "New");
+      await sendInvoiceNotification(customerEmail, session.email, invoiceUrl, "New");
 
       return { message: "Invoice created successfully!" };
     }
@@ -287,14 +287,14 @@ export async function fetchPaymentLinkAndInvoice(): Promise<InvoiceBarProps[] | 
       const invoiceData = invoiceDocs.map((inv) => ({
         type: "invoice" as const,
         text: `Invoice created on ${new Date(inv.createdAt).toLocaleDateString()}: ID: ${inv._id.toString()}`,
-        url: `https://personal-mileston.vercel.app/invoice/${inv._id.toString()}`,
+        url: `https://personal.mileston.co/invoice/${inv._id.toString()}`,
         invoiceId: inv._id.toString(),
       }));
 
       const paymentData = paymentDocs.map((pay) => ({
         type: "paymentLink" as const,
         text: `Payment Link created on ${new Date(pay.createdAt).toLocaleDateString()}: ID: ${pay._id.toString()}`,
-        url: `https://personal-mileston.vercel.app/payment/${pay._id.toString()}`,
+        url: `https://personal.mileston.co/payment/${pay._id.toString()}`,
         invoiceId: pay._id.toString(),
       }));
 

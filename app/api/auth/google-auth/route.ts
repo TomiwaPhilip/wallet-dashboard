@@ -61,6 +61,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           solanaAddress: existingWallet.solanaPublicKey,
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
+          isSecretCopied: existingUser.isSecretCopied,
           isLoggedIn: true,
         };
 
@@ -129,6 +130,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           solanaAddress: newWallet.solanaAddress,
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
+          isSecretCopied: newUser.isSecretCopied,
           isLoggedIn: true,
         };
 
