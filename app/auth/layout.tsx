@@ -19,7 +19,7 @@ export default function RootLayout({
         <main className="h-screen flex items-center justify-center">
           <Card>{children}</Card>
         </main>
-        <GoogleAnalytics gaId="G-4L4BM0EEW7" />
+        <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       </body>
     </html>
   );
