@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from '@next/third-parties/google';
+
 import "../../globals.css";
 import { MobileNav, Nav } from "@/components/shared/shared";
 
@@ -24,6 +26,7 @@ export default function RootLayout({
             {children}
           </div>
         </main>
+        <GoogleAnalytics gaId="G-4L4BM0EEW7" />
       </body>
     </html>
   );
