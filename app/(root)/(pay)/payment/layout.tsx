@@ -14,11 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       <body>
         <main className="h-full min-h-screen text-white">
           <div className="">{children}</div>
         </main>
-        <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       </body>
     </html>
   );

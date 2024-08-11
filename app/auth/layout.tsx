@@ -15,11 +15,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       <body className="bg-[#0A0C13] text-white">
         <main className="h-screen flex items-center justify-center">
           <Card>{children}</Card>
         </main>
-        <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       </body>
     </html>
   );

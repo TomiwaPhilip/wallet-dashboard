@@ -16,6 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       <body>
         <main className="styled-bg h-full min-h-screen text-white py-[1rem] px-[1rem] md:py-[2rem] md:px-[3rem] lg:py-[4rem] lg:px-[6rem]">
           <div className="hidden sm:block">
@@ -26,7 +27,6 @@ export default function RootLayout({
             {children}
           </div>
         </main>
-        <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       </body>
     </html>
   );
