@@ -2,6 +2,7 @@
 import getSession from "../server-hooks/getsession.action";
 import connectToDB from "../../model/database";
 import User from "../../schemas/user";
+import { connect } from "http2";
 
 interface SaveSettingsProps {
   firstName: string;
@@ -117,4 +118,27 @@ export async function SaveImage({ image }: { image: string }) {
     console.error("Error updating user settings:", error);
     return false;
   }
+}
+
+
+export async function joinWaitlist() {
+  await connectToDB();
+  
+  const session = await getSession();
+
+  if (!session) {
+    throw new Error("Unauthorized!");
+  }
+
+  const userId = session.userId;
+
+  const updatedUser = await User.findByIdAndUpdate(userId, {
+    hasJoinedWaitlist: true,
+  });
+
+  session.hasJoinedWaitlist = true;
+
+  await session.save();
+
+  return;
 }

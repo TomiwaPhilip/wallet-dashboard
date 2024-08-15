@@ -91,6 +91,7 @@ export async function saveSession(session: SessionData): Promise<void> {
   existingSession.isOnboarded = session.isOnboarded;
   existingSession.isVerified = session.isVerified;
   existingSession.isSecretCopied = session.isSecretCopied;
+  existingSession.hasJoinedWaitlist = session.hasJoinedWaitlist;
   existingSession.isLoggedIn = session.isLoggedIn;
 
   // Save the session

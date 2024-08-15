@@ -13,6 +13,7 @@ export interface SessionData {
   isVerified?: boolean;
   callbackUrl?: string | null;
   isSecretCopied?: boolean;
+  hasJoinedWaitlist?: boolean;
   isLoggedIn: boolean;
 }
 
@@ -20,6 +21,7 @@ export const defaultSession: SessionData = {
   isLoggedIn: false,
   callbackUrl: null,
   isSecretCopied: false,
+  hasJoinedWaitlist: false,
 };
 
 export const sessionOptions: SessionOptions = {

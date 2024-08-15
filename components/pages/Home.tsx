@@ -15,12 +15,14 @@ import { RiLoader4Line } from "react-icons/ri";
 import TransactionHistory from "../shared/TransactionHistory";
 import Receive from "../forms/transactions/Receive";
 import { useSession } from "../shared/session";
+import { joinWaitlist } from "@/server/actions/auth/settings.action";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
 
   const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-  const { data, error, isLoading } = useSWR('/api/transactions/balance', fetcher, {refreshInterval: 1000});
+  const { data, error, isLoading } = useSWR('/api/transactions/balance', fetcher, { refreshInterval: 1000 });
 
   console.log(isLoading);
   if (!isLoading) {
@@ -40,6 +42,9 @@ export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean | null>(false);
   const [isModalOpen2, setIsModalOpen2] = useState<boolean | null>(false);
   const [isModalOpen3, setIsModalOpen3] = useState<boolean | null>(false);
+  const [isModalOpen4, setIsModalOpen4] = useState<boolean | null>(false);
+
+  const router = useRouter();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -75,6 +80,32 @@ export default function HomePage() {
     setIsModalOpen3(null);
     setIsModalOpen2(null);
   };
+
+  const handleOpenModal4 = () => {
+    setIsModalOpen4(true);
+    setIsModalOpen(null);
+    setIsModalOpen2(null);
+    setIsModalOpen3(null);
+  };
+
+  const handleCloseModal4 = () => {
+    setIsModalOpen(null);
+    setIsModalOpen2(null);
+    setIsModalOpen3(null);
+    setIsModalOpen(null);
+  };
+
+  if (session?.hasJoinedWaitlist === false) {
+    handleOpenModal4()
+  }
+
+  const handleJoinWaitList = async () => {
+    await joinWaitlist();
+  }
+
+  const handleGoToWaitlist = () => {
+    router.push("https://waitlist.mileston.co");
+  }
 
   return (
     <>
@@ -151,6 +182,26 @@ export default function HomePage() {
       </Modal>
       <Modal isOpen={isModalOpen2} onClose={handleCloseModal2}>
         <ExternalSend />
+      </Modal>
+      <Modal isOpen={isModalOpen4} onClose={handleCloseModal4}>
+        <div className="p-5 text-center">
+          <h1 className="text-[32px] font-bold">Have you joined the Mileston Waitlist yet?</h1>
+          <p className="text-[24px] font-semibold">Click the below button join now!</p>
+          <NoOutlineButtonIcon
+            name="Join Now"
+            type="button"
+            iconSrc="/assets/icons/arrow_circle_left.svg"
+            buttonClassName="w-full my-3"
+            onClick={handleGoToWaitlist}
+          />
+          <NoOutlineButtonIcon
+            name="I have Joined"
+            type="button"
+            iconSrc="/assets/icons/arrow_circle_left.svg"
+            buttonClassName="w-full my-3"
+            onClick={handleJoinWaitList}
+          />
+        </div>
       </Modal>
     </>
   );

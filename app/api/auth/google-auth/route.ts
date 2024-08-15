@@ -62,6 +62,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
           isSecretCopied: existingUser.isSecretCopied,
+          hasJoinedWaitlist: existingUser.hasJoinedWaitlist,
           isLoggedIn: true,
         };
 
@@ -131,6 +132,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
           isSecretCopied: newUser.isSecretCopied,
+          hasJoinedWaitlist: newUser.hasJoinedWaitlist,
           isLoggedIn: true,
         };
 

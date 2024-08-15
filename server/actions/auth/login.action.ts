@@ -88,6 +88,7 @@ export async function verifyUserTokenAndLogin(code: string) {
           isOnboarded: existingUser.onboarded,
           isVerified: existingUser.verified,
           isSecretCopied: existingUser.isSecretCopied,
+          hasJoinedWaitlist: existingUser.hasJoinedWaitlist,
           isLoggedIn: true,
         };
 
@@ -128,6 +129,7 @@ export async function verifyUserTokenAndLogin(code: string) {
           isOnboarded: newUser.onboarded,
           isVerified: newUser.verified,
           isSecretCopied: newUser.isSecretCopied,
+          hasJoinedWaitlist: newUser.hasJoinedWaitlist,
           isLoggedIn: true,
         };
 
