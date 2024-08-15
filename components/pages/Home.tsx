@@ -91,7 +91,7 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    if (session?.hasJoinedWaitlist != true) {
+    if (session?.hasJoinedWaitlist === false && !isModalOpen4) {
       handleOpenModal4();
     }
   }, [session?.hasJoinedWaitlist]);  // Only run when `session.hasJoinedWaitlist` changes
