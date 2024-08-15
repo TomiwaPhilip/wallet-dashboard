@@ -111,9 +111,9 @@ export default function PaymentLink({ paymentLinkId }: Props) {
           setPaymentDetails(data);
           console.log("Payment Details:", data);
   
-          if (session?.email === data?.receiverUserEmail) {
-            setDisable(true);
-          }
+          // if (session?.email === data?.receiverUserEmail) {
+          //   setDisable(true);
+          // }
         } else {
           console.warn("Data does not match PaymentDetails structure", data);
         }
@@ -193,6 +193,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
           backgroundColor: paymentDetails?.backgroundColor || "#0A0C13",
           color: paymentDetails?.textColor || "#fff",
         }}
+        className="h-full h-screen "
       >
         <div className="">
           <Image
@@ -204,7 +205,7 @@ export default function PaymentLink({ paymentLinkId }: Props) {
           />
         </div>
         <div className="mt-5">
-          <div className="grid grid-cols-10 gap-1 mb-[1.5rem] px-[10rem]">
+          <div className="grid grid-cols-10 gap-1 mb-[1.5rem] px-[2rem] md:px-[10rem]">
             <div className="col-span-2 flex items-center justify-center">
               <Image
                 src={
@@ -217,11 +218,11 @@ export default function PaymentLink({ paymentLinkId }: Props) {
               />
             </div>
             <div className="col-span-8">
-              <h2 className="font-bold text-[36px]">{paymentDetails?.title}</h2>
+              <h2 className="font-bold text-[24px] md:text-[36px]">{paymentDetails?.title}</h2>
               <p className="text-[16px]">{paymentDetails?.description}</p>
             </div>
           </div>
-          <div className="flex items-center justify-center px-[15rem]">
+          <div className="flex items-center justify-center px-[1rem] md:px-[15rem] mt-10">
             <Card2 bgColor={paymentDetails?.foregroundColor}>
               {message ? (
                 <p
@@ -233,10 +234,10 @@ export default function PaymentLink({ paymentLinkId }: Props) {
                 </p>
               ) : (
                 <>
-                  <p className="font-bold text-[36px] text-center">
+                  <p className="font-bold text-[24px] md:text-[36px] text-center">
                     Pay with Mileston
                   </p>
-                  <div className="mt-10 text-[32px] font-bold w-full flex justify-between items-center">
+                  <div className="mt-10 text-[20px] md:text-[32px] font-bold w-full flex justify-between items-center">
                     <p>Amount to Pay:</p>
                     <div className="flex items-center">
                       <p>{paymentDetails?.amount}</p>
