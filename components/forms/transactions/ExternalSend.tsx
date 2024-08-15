@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import { NoOutlineButtonIcon } from "@/components/shared/buttons";
 import { useSession } from "@/components/shared/session";
 import { TransactionMessage } from "@/components/shared/shared";
-import { sendFundsToExternalWallet } from "@/server/actions/transactions/send.action";
+import { sendFundsToExternalWallet, sendFundsToWallet } from "@/server/actions/transactions/send.action";
 
 interface FormData {
   usdcNetwork: string;
   walletAddress: string;
   amount: string;
+  secretPhrase: string;
 }
 
 const ExternalSend: React.FC = () => {
@@ -16,6 +17,7 @@ const ExternalSend: React.FC = () => {
     usdcNetwork: "",
     walletAddress: "",
     amount: "0",
+    secretPhrase: "",
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -39,6 +41,16 @@ const ExternalSend: React.FC = () => {
 
     if (!data.amount) {
       newErrors.amount = "Amount must be greater than 0";
+    }
+
+    // Validate secretPhrase with 6 words
+    if (!data.secretPhrase.trim()) {
+      newErrors.secretPhrase = "Secret phrase is required";
+    } else {
+      const words = data.secretPhrase.trim().split(/\s+/);
+      if (words.length !== 6) {
+        newErrors.secretPhrase = "Secret phrase must contain exactly 6 words";
+      }
     }
 
     return newErrors;
@@ -71,15 +83,15 @@ const ExternalSend: React.FC = () => {
         // Call your submit function here
         console.log("Forms:")
         console.log(formData)
-        const response = await sendFundsToExternalWallet({
-          walletAddress: formData.walletAddress,
-          usdcNetwork: formData.usdcNetwork,
+        const response = await sendFundsToWallet({
+          identifier: formData.walletAddress,
           amount: formData.amount,
+          secretPhrase: formData.secretPhrase,
         });
         if (response.error) {
           setMessage(response.error);
           setMessageType(false);
-        } else if(response.message) {
+        } else if (response.message) {
           setMessage(response.message);
           setMessageType(true);
         }
@@ -97,9 +109,9 @@ const ExternalSend: React.FC = () => {
     <>
       {isSubmitted ? (
         <div className="text-center flex items-center justify-center">
-          <TransactionMessage 
-            message={message} 
-            type={messageType} 
+          <TransactionMessage
+            message={message}
+            type={messageType}
           />
         </div>
       ) : (
@@ -116,12 +128,12 @@ const ExternalSend: React.FC = () => {
                 onChange={handleChange}
                 className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.usdcNetwork ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8]`}
               >
-                <option value="">Select USDC Network</option>
+                <option value="" disabled>Select USDC Network</option>
                 <option value="Solana">Solana</option>
-                <option value="Ethereum">Ethereum</option>
+                {/* <option value="Ethereum">Ethereum</option>
                 <option value="Binance Smart Chain">Binance Smart Chain</option>
                 <option value="TRON">TRON</option>
-                <option value="Avaxc">Avax Chain</option>
+                <option value="Avaxc">Avax Chain</option> */}
               </select>
               {errors.usdcNetwork && (
                 <p className="text-red-500 text-sm mt-1">
@@ -161,6 +173,21 @@ const ExternalSend: React.FC = () => {
               />
               {errors.amount && (
                 <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium">Secret Phrase</label>
+              <input
+                type="password"
+                name="secretPhrase"
+                value={formData.secretPhrase}
+                placeholder="*****"
+                onChange={handleChange}
+                className={`mt-1 block w-full px-3 py-2 bg-[#131621] border ${errors.secretPhrase ? "border-red-500" : "border-[#979EB8]"} rounded-xl focus:outline-none focus:ring-[#979EB8] focus:border-[#979EB8] placeholder:text-[#464D67]`}
+              />
+              {errors.secretPhrase && (
+                <p className="text-red-500 text-sm mt-1">{errors.secretPhrase}</p>
               )}
             </div>
 
