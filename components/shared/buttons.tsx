@@ -101,7 +101,7 @@ interface NoOutlineButtonIconProps {
   type: "submit" | "button";
   disabled?: boolean;
   loading?: boolean;
-  iconSrc: string;
+  iconSrc?: string;
   onClick?: () => void;
   buttonClassName?: string;
   iconClassName?: string;
@@ -128,15 +128,17 @@ export function NoOutlineButtonIcon({
       disabled={disabled}
       onClick={handleClick}
     >
-      <div className={`mr-2 ${iconClassName}`}>
-        <Image
-          src={iconSrc}
-          alt="Button Icon"
-          height={20}
-          width={20}
-          className="rounded-full" // Adding rounded-full class to the image
-        />
-      </div>
+      {iconSrc && (
+        <div className={`mr-2 ${iconClassName}`}>
+          <Image
+            src={iconSrc}
+            alt="Button Icon"
+            height={20}
+            width={20}
+            className="rounded-full" // Adding rounded-full class to the image
+          />
+        </div>
+      )}
       {loading ? (
         <RiLoader4Line className="animate-spin text-2xl" />
       ) : (

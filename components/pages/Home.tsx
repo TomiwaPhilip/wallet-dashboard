@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useSWR from 'swr';
 
 import {
@@ -24,11 +24,6 @@ export default function HomePage() {
 
   const { data, error, isLoading } = useSWR('/api/transactions/balance', fetcher, { refreshInterval: 1000 });
 
-  console.log(isLoading);
-  if (!isLoading) {
-    console.log(data);
-  }
-
   const session = useSession();
   const walletAddress = session?.solanaAddress || '';
 
@@ -39,73 +34,76 @@ export default function HomePage() {
     // handle other state changes here
   };
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean | null>(false);
-  const [isModalOpen2, setIsModalOpen2] = useState<boolean | null>(false);
-  const [isModalOpen3, setIsModalOpen3] = useState<boolean | null>(false);
-  const [isModalOpen4, setIsModalOpen4] = useState<boolean | null>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalOpen2, setIsModalOpen2] = useState<boolean>(false);
+  const [isModalOpen3, setIsModalOpen3] = useState<boolean>(false);
+  const [isModalOpen4, setIsModalOpen4] = useState<boolean>(false);
 
   const router = useRouter();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
-    setIsModalOpen2(null);
+    setIsModalOpen2(false);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(null);
-    setIsModalOpen2(null);
-    setIsModalOpen3(null);
+    setIsModalOpen(false);
+    setIsModalOpen2(false);
+    setIsModalOpen3(false);
   };
 
   const handleOpenModal2 = () => {
     setIsModalOpen2(true);
-    setIsModalOpen(null);
-    setIsModalOpen3(null);
+    setIsModalOpen(false);
+    setIsModalOpen3(false);
   };
 
   const handleCloseModal2 = () => {
-    setIsModalOpen(null);
-    setIsModalOpen2(null);
-    setIsModalOpen3(null);
+    setIsModalOpen(false);
+    setIsModalOpen2(false);
+    setIsModalOpen3(false);
   };
 
   const handleOpenModal3 = () => {
     setIsModalOpen3(true);
-    setIsModalOpen(null);
-    setIsModalOpen2(null);
+    setIsModalOpen(false);
+    setIsModalOpen2(false);
   };
 
   const handleCloseModal3 = () => {
-    setIsModalOpen(null);
-    setIsModalOpen3(null);
-    setIsModalOpen2(null);
+    setIsModalOpen(false);
+    setIsModalOpen3(false);
+    setIsModalOpen2(false);
   };
 
   const handleOpenModal4 = () => {
     setIsModalOpen4(true);
-    setIsModalOpen(null);
-    setIsModalOpen2(null);
-    setIsModalOpen3(null);
+    setIsModalOpen(false);
+    setIsModalOpen2(false);
+    setIsModalOpen3(false);
   };
 
   const handleCloseModal4 = () => {
-    setIsModalOpen(null);
-    setIsModalOpen2(null);
-    setIsModalOpen3(null);
-    setIsModalOpen(null);
+    setIsModalOpen(false);
+    setIsModalOpen2(false);
+    setIsModalOpen3(false);
+    setIsModalOpen4(false);
   };
 
-  if (session?.hasJoinedWaitlist === false) {
-    handleOpenModal4()
-  }
+  useEffect(() => {
+    if (session?.hasJoinedWaitlist != true) {
+      handleOpenModal4();
+    }
+  }, [session?.hasJoinedWaitlist]);  // Only run when `session.hasJoinedWaitlist` changes
 
   const handleJoinWaitList = async () => {
     await joinWaitlist();
-  }
+    handleCloseModal4();
+  };
 
   const handleGoToWaitlist = () => {
     router.push("https://waitlist.mileston.co");
-  }
+  };
 
   return (
     <>
@@ -187,17 +185,16 @@ export default function HomePage() {
         <div className="p-5 text-center">
           <h1 className="text-[32px] font-bold">Have you joined the Mileston Waitlist yet?</h1>
           <p className="text-[24px] font-semibold">Click the below button join now!</p>
+          <br />
           <NoOutlineButtonIcon
             name="Join Now"
             type="button"
-            iconSrc="/assets/icons/arrow_circle_left.svg"
             buttonClassName="w-full my-3"
             onClick={handleGoToWaitlist}
           />
           <NoOutlineButtonIcon
             name="I have Joined"
             type="button"
-            iconSrc="/assets/icons/arrow_circle_left.svg"
             buttonClassName="w-full my-3"
             onClick={handleJoinWaitList}
           />
