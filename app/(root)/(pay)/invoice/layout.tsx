@@ -16,7 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <GoogleAnalytics gaId="G-5T3MLP6W2Z" />
       <body>
-        <main className="bg-[#0A0C13] h-full min-h-screen text-white py-[4rem] px-[6rem]">
+        <main className="bg-[#0A0C13] h-full min-h-screen text-white py-[1rem] px-[1rem] md:py-[2rem] md:px-[3rem] lg:py-[4rem] lg:px-[6rem]">
           <div className="mt-[4rem]">{children}</div>
         </main>
       </body>

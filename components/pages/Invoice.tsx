@@ -173,8 +173,8 @@ export default function InvoicePage({ invoiceId }: Props) {
     return (
         <>
             <div className="">
-                <h1 className="font-bold text-[32px]">Invoice from {paymentDetails?.receiverUser}</h1>
-                <div className="mt-[5rem] flex justify-between w-full gap-10">
+                <h1 className="font-bold text-[24px] md:text-[32px]">Invoice from {paymentDetails?.receiverUser}</h1>
+                <div className="mt-[5rem] flex flex-col justify-between w-full gap-10 md:flex-row">
                     <div className="flex-1">
                         <div className="mb-10">
                             <h3 className="text-[20px] text-[#3344A8] mb-3">From:</h3>
@@ -197,8 +197,8 @@ export default function InvoicePage({ invoiceId }: Props) {
                                 </p>
                             ) : (
                                 <>
-                                    <p className="font-bold text-[36px] text-center">Pay with Mileston</p>
-                                    <div className="mt-10 text-[32px] font-bold w-full flex justify-between items-center">
+                                    <p className="font-bold text-[24px] md:text-[36px] text-center">Pay with Mileston</p>
+                                    <div className="mt-10 text-[20px] md:text-[32px] font-bold w-full flex justify-between items-center">
                                         <p>Amount to Pay:</p>
                                         <div className="flex items-center">
                                             <p>{paymentDetails?.amountDue}</p>
